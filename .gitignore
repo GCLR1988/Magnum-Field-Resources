@@ -1,0 +1,21 @@
+# macOS
+.DS_Store
+
+# Xcode build products / derived data
+build/
+DerivedData/
+
+# Per-developer Xcode state (breakpoints, open tabs, window layout) --
+# not meaningful to anyone but the machine that created it.
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+*.xccheckout
+
+# Swift Package Manager (not currently used by this project, but harmless to exclude)
+.build/
+Package.resolved
+
+# Playgrounds
+timeline.xctimeline
+playground.xcworkspace

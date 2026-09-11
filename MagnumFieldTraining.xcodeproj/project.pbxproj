@@ -1,0 +1,449 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		02D60C07520B5EE7564A4690 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93D518CD667C9EA2681BBEC1 /* ContentView.swift */; };
+		046AC871B45B45CD9054435C /* WalkthroughFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 441293603A034E6DA2477BFB /* WalkthroughFolder.swift */; };
+		06CA1E8CB428CD310D37721C /* ProgramDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34894214D0C0A259103BF759 /* ProgramDetailView.swift */; };
+		0AE1A60759D3E382DA7F4706 /* CatalogStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66AE45529F92E06569D1B213 /* CatalogStore.swift */; };
+		0D01A256EC3549CCB2F90148 /* PDFThumbnailBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3308B7EE1B405396BCCE93 /* PDFThumbnailBar.swift */; };
+		0FE684DA68EDED3A896EA7F0 /* DropboxAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2655A177084148F16C62C0 /* DropboxAuthService.swift */; };
+		14B915D8338F45EC816EC3A7 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4D4E01E91B464FA8B879DD /* SettingsStore.swift */; };
+		2005FEB4A41C5E19DA56A7E3 /* Program.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB145AB0EC57EEDA8D7EB04A /* Program.swift */; };
+		3DD9C18345254CEF9C1A67B3 /* PinnedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E6ACABF4ED4B35BAC92284 /* PinnedStore.swift */; };
+		44DBA0121E418CAF43C79DF1 /* MediaCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC8A93792840E74654BE466E /* MediaCache.swift */; };
+		4939669A8A2FA72E1AACB3B2 /* DropboxModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8882563DE925334ED36D283C /* DropboxModels.swift */; };
+		4BAAC0EC988EB56E362E2B50 /* ProgramData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A2126FFAC7EA207C052E18A /* ProgramData.swift */; };
+		546F6216EDCB2F873BAA8556 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D1B8A95FE5AA189ECF66E40 /* Assets.xcassets */; };
+		60CE6C50D1448E35713C8EEB /* PDFKitRepresentedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD16C354868A8ED1FC7B9771 /* PDFKitRepresentedView.swift */; };
+		8E0DB0DFD61E43F489611A33 /* CardRowStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D21D73FA3B474C72B2E3EBF1 /* CardRowStyle.swift */; };
+		9B7EE1255E5347ECAE70EC8E /* EmptyStateCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC285F8826424164ACE39DFD /* EmptyStateCard.swift */; };
+		A4758201E45714A7FE78E2F1 /* DropboxService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2287311A09B4EAB4EDE52280 /* DropboxService.swift */; };
+		A9C056B1FB5BBD69A343FF43 /* DropboxConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2058DFAE2FECB41646D59F3E /* DropboxConfig.swift */; };
+		D35CCD1FC98DD57F46AA763C /* WalkthroughRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAE826B0B6AD4ADB5739114E /* WalkthroughRow.swift */; };
+		D60C5CB9D1BA4D4FBB09E703 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FA4D36E7E34DBABB3FF701 /* NetworkMonitor.swift */; };
+		E6249C9ED1A948A9B37DD07F /* SeenStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958B717D7F5845E2898624EE /* SeenStore.swift */; };
+		E7416CF34E1830D1B3E269F4 /* MagnumFieldTrainingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE60A5B876E7413ACC17889A /* MagnumFieldTrainingApp.swift */; };
+		F653414765A25CF0F919E9B7 /* WalkthroughDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054C29D10A5CB8D6633ACB09 /* WalkthroughDetailView.swift */; };
+		F7840E27277F49128F762101 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A489F3B3F84CD895BAC007 /* SettingsView.swift */; };
+		F9A202324F12BFDEE038D0CC /* PDFs in Resources */ = {isa = PBXBuildFile; fileRef = D66D75169D64BEB98AC6BD75 /* PDFs */; };
+		FAD045E5711C3006F3B1672A /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A96BC497A9ADEBB7070F5AA /* SplashView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		054C29D10A5CB8D6633ACB09 /* WalkthroughDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkthroughDetailView.swift; sourceTree = "<group>"; };
+		07E6ACABF4ED4B35BAC92284 /* PinnedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinnedStore.swift; sourceTree = "<group>"; };
+		1A2655A177084148F16C62C0 /* DropboxAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropboxAuthService.swift; sourceTree = "<group>"; };
+		2058DFAE2FECB41646D59F3E /* DropboxConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropboxConfig.swift; sourceTree = "<group>"; };
+		2287311A09B4EAB4EDE52280 /* DropboxService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropboxService.swift; sourceTree = "<group>"; };
+		34894214D0C0A259103BF759 /* ProgramDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgramDetailView.swift; sourceTree = "<group>"; };
+		3A96BC497A9ADEBB7070F5AA /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
+		441293603A034E6DA2477BFB /* WalkthroughFolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkthroughFolder.swift; sourceTree = "<group>"; };
+		66AE45529F92E06569D1B213 /* CatalogStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogStore.swift; sourceTree = "<group>"; };
+		6A2126FFAC7EA207C052E18A /* ProgramData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgramData.swift; sourceTree = "<group>"; };
+		6E4D4E01E91B464FA8B879DD /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
+		7D1B8A95FE5AA189ECF66E40 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		81FA4D36E7E34DBABB3FF701 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
+		8882563DE925334ED36D283C /* DropboxModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropboxModels.swift; sourceTree = "<group>"; };
+		93D518CD667C9EA2681BBEC1 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		958B717D7F5845E2898624EE /* SeenStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeenStore.swift; sourceTree = "<group>"; };
+		AA3308B7EE1B405396BCCE93 /* PDFThumbnailBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFThumbnailBar.swift; sourceTree = "<group>"; };
+		AC8A93792840E74654BE466E /* MediaCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaCache.swift; sourceTree = "<group>"; };
+		BAE826B0B6AD4ADB5739114E /* WalkthroughRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkthroughRow.swift; sourceTree = "<group>"; };
+		BE60A5B876E7413ACC17889A /* MagnumFieldTrainingApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MagnumFieldTrainingApp.swift; sourceTree = "<group>"; };
+		D0BF38DF2F72A56E6EA79E5F /* MagnumFieldTraining.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MagnumFieldTraining.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D21D73FA3B474C72B2E3EBF1 /* CardRowStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardRowStyle.swift; sourceTree = "<group>"; };
+		D5A489F3B3F84CD895BAC007 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		D66D75169D64BEB98AC6BD75 /* PDFs */ = {isa = PBXFileReference; lastKnownFileType = folder; path = PDFs; sourceTree = "<group>"; };
+		DD16C354868A8ED1FC7B9771 /* PDFKitRepresentedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFKitRepresentedView.swift; sourceTree = "<group>"; };
+		EB145AB0EC57EEDA8D7EB04A /* Program.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Program.swift; sourceTree = "<group>"; };
+		EC285F8826424164ACE39DFD /* EmptyStateCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateCard.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		24177A3AB7E31C794F090C09 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0E8E8D21A9ACBF4C39BCC484 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				EB145AB0EC57EEDA8D7EB04A /* Program.swift */,
+				07E6ACABF4ED4B35BAC92284 /* PinnedStore.swift */,
+				441293603A034E6DA2477BFB /* WalkthroughFolder.swift */,
+				66AE45529F92E06569D1B213 /* CatalogStore.swift */,
+				958B717D7F5845E2898624EE /* SeenStore.swift */,
+				6E4D4E01E91B464FA8B879DD /* SettingsStore.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		4AD7F867CA8F63A6DC5DA17F /* Sync */ = {
+			isa = PBXGroup;
+			children = (
+				8882563DE925334ED36D283C /* DropboxModels.swift */,
+				2058DFAE2FECB41646D59F3E /* DropboxConfig.swift */,
+				1A2655A177084148F16C62C0 /* DropboxAuthService.swift */,
+				2287311A09B4EAB4EDE52280 /* DropboxService.swift */,
+				AC8A93792840E74654BE466E /* MediaCache.swift */,
+				81FA4D36E7E34DBABB3FF701 /* NetworkMonitor.swift */,
+			);
+			path = Sync;
+			sourceTree = "<group>";
+		};
+		4C8E30E4BB3EF1B3BF9E8042 = {
+			isa = PBXGroup;
+			children = (
+				FAF41E46E10F263997218E2C /* MagnumFieldTraining */,
+				A66A5F1666710C9AFAE58AC1 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A66A5F1666710C9AFAE58AC1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D0BF38DF2F72A56E6EA79E5F /* MagnumFieldTraining.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A7015190FD43E852C050846E /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				34894214D0C0A259103BF759 /* ProgramDetailView.swift */,
+				DD16C354868A8ED1FC7B9771 /* PDFKitRepresentedView.swift */,
+				054C29D10A5CB8D6633ACB09 /* WalkthroughDetailView.swift */,
+				BAE826B0B6AD4ADB5739114E /* WalkthroughRow.swift */,
+				AA3308B7EE1B405396BCCE93 /* PDFThumbnailBar.swift */,
+				D21D73FA3B474C72B2E3EBF1 /* CardRowStyle.swift */,
+				EC285F8826424164ACE39DFD /* EmptyStateCard.swift */,
+				D5A489F3B3F84CD895BAC007 /* SettingsView.swift */,
+				3A96BC497A9ADEBB7070F5AA /* SplashView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		DFEBB25CAC3AC259C4B39BDC /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				6A2126FFAC7EA207C052E18A /* ProgramData.swift */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		FAF41E46E10F263997218E2C /* MagnumFieldTraining */ = {
+			isa = PBXGroup;
+			children = (
+				BE60A5B876E7413ACC17889A /* MagnumFieldTrainingApp.swift */,
+				93D518CD667C9EA2681BBEC1 /* ContentView.swift */,
+				0E8E8D21A9ACBF4C39BCC484 /* Models */,
+				DFEBB25CAC3AC259C4B39BDC /* Data */,
+				A7015190FD43E852C050846E /* Views */,
+				4AD7F867CA8F63A6DC5DA17F /* Sync */,
+				7D1B8A95FE5AA189ECF66E40 /* Assets.xcassets */,
+				D66D75169D64BEB98AC6BD75 /* PDFs */,
+			);
+			path = MagnumFieldTraining;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4C2B07073750C788860C4667 /* MagnumFieldTraining */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CF8EF38B4D53073FB10094AB /* Build configuration list for PBXNativeTarget "MagnumFieldTraining" */;
+			buildPhases = (
+				593B91E6AB484D3F01706FD7 /* Sources */,
+				24177A3AB7E31C794F090C09 /* Frameworks */,
+				FB852B355412DB706F102DB2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MagnumFieldTraining;
+			productName = MagnumFieldTraining;
+			productReference = D0BF38DF2F72A56E6EA79E5F /* MagnumFieldTraining.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		ED9F8347094CF86F34495133 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1520;
+				LastUpgradeCheck = 2700;
+				TargetAttributes = {
+					4C2B07073750C788860C4667 = {
+						CreatedOnToolsVersion = 15.2;
+					};
+				};
+			};
+			buildConfigurationList = 4026DB150F693B450BE072DC /* Build configuration list for PBXProject "MagnumFieldTraining" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 4C8E30E4BB3EF1B3BF9E8042;
+			productRefGroup = A66A5F1666710C9AFAE58AC1 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4C2B07073750C788860C4667 /* MagnumFieldTraining */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		FB852B355412DB706F102DB2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				546F6216EDCB2F873BAA8556 /* Assets.xcassets in Resources */,
+				F9A202324F12BFDEE038D0CC /* PDFs in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		593B91E6AB484D3F01706FD7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E7416CF34E1830D1B3E269F4 /* MagnumFieldTrainingApp.swift in Sources */,
+				02D60C07520B5EE7564A4690 /* ContentView.swift in Sources */,
+				2005FEB4A41C5E19DA56A7E3 /* Program.swift in Sources */,
+				4BAAC0EC988EB56E362E2B50 /* ProgramData.swift in Sources */,
+				3DD9C18345254CEF9C1A67B3 /* PinnedStore.swift in Sources */,
+				046AC871B45B45CD9054435C /* WalkthroughFolder.swift in Sources */,
+				0AE1A60759D3E382DA7F4706 /* CatalogStore.swift in Sources */,
+				06CA1E8CB428CD310D37721C /* ProgramDetailView.swift in Sources */,
+				60CE6C50D1448E35713C8EEB /* PDFKitRepresentedView.swift in Sources */,
+				F653414765A25CF0F919E9B7 /* WalkthroughDetailView.swift in Sources */,
+				D35CCD1FC98DD57F46AA763C /* WalkthroughRow.swift in Sources */,
+				4939669A8A2FA72E1AACB3B2 /* DropboxModels.swift in Sources */,
+				A9C056B1FB5BBD69A343FF43 /* DropboxConfig.swift in Sources */,
+				0FE684DA68EDED3A896EA7F0 /* DropboxAuthService.swift in Sources */,
+				A4758201E45714A7FE78E2F1 /* DropboxService.swift in Sources */,
+				44DBA0121E418CAF43C79DF1 /* MediaCache.swift in Sources */,
+				14B915D8338F45EC816EC3A7 /* SettingsStore.swift in Sources */,
+				E6249C9ED1A948A9B37DD07F /* SeenStore.swift in Sources */,
+				D60C5CB9D1BA4D4FBB09E703 /* NetworkMonitor.swift in Sources */,
+				F7840E27277F49128F762101 /* SettingsView.swift in Sources */,
+				0D01A256EC3549CCB2F90148 /* PDFThumbnailBar.swift in Sources */,
+				8E0DB0DFD61E43F489611A33 /* CardRowStyle.swift in Sources */,
+				9B7EE1255E5347ECAE70EC8E /* EmptyStateCard.swift in Sources */,
+				FAD045E5711C3006F3B1672A /* SplashView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		151DFD54068F4E807A514139 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 6;
+				DEVELOPMENT_TEAM = 4LAZG5FD6F;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Training Depot";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_UIColorName = WarmBackground;
+				INFOPLIST_KEY_UILaunchScreen_UIImageName = LogoMark;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.5;
+				PRODUCT_BUNDLE_IDENTIFIER = com.magnumfieldtraining.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		668EE51E18223346A8C84562 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		69C62EBAD528D09568016791 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 6;
+				DEVELOPMENT_TEAM = 4LAZG5FD6F;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Training Depot";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_UIColorName = WarmBackground;
+				INFOPLIST_KEY_UILaunchScreen_UIImageName = LogoMark;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.5;
+				PRODUCT_BUNDLE_IDENTIFIER = com.magnumfieldtraining.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		A3B9B75F26B2CF70463B6459 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4026DB150F693B450BE072DC /* Build configuration list for PBXProject "MagnumFieldTraining" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A3B9B75F26B2CF70463B6459 /* Debug */,
+				668EE51E18223346A8C84562 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CF8EF38B4D53073FB10094AB /* Build configuration list for PBXNativeTarget "MagnumFieldTraining" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				151DFD54068F4E807A514139 /* Debug */,
+				69C62EBAD528D09568016791 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = ED9F8347094CF86F34495133 /* Project object */;
+}
