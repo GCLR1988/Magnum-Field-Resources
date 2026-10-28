@@ -1,0 +1,568 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "" : {
+
+    },
+    "%@ · %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · %2$@"
+          }
+        }
+      }
+    },
+    "%@ · Website · Internet required" : {
+
+    },
+    "%lld contacts" : {
+
+    },
+    "%lld downloads need attention" : {
+
+    },
+    "%lld/%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld/%2$lld"
+          }
+        }
+      }
+    },
+    "A few essentials to help you get set up and feel confident using your device." : {
+
+    },
+    "Accept, decline, or tentatively accept an invitation." : {
+
+    },
+    "Add your email account and sign in." : {
+
+    },
+    "Adjust swipe actions and other mobile settings." : {
+
+    },
+    "Adjust text size" : {
+
+    },
+    "All One Safe Team" : {
+
+    },
+    "Available offline" : {
+
+    },
+    "Back up with iCloud" : {
+
+    },
+    "Call %@, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Call %1$@, %2$@"
+          }
+        }
+      }
+    },
+    "Call contacts and learn about your available calling options." : {
+
+    },
+    "Cancel" : {
+
+    },
+    "Capture a demonstration to share with your team." : {
+
+    },
+    "Capture and share what is on your screen." : {
+
+    },
+    "Choose a folder in Files to save this form" : {
+
+    },
+    "Choose your alerts and troubleshoot missing notifications." : {
+
+    },
+    "Clear" : {
+
+    },
+    "Clear all cached PDFs and videos?" : {
+
+    },
+    "Clear Cached Files" : {
+
+    },
+    "Clear recently viewed history" : {
+
+    },
+    "Close" : {
+
+    },
+    "Company Directory" : {
+
+    },
+    "Company Newsletter" : {
+
+    },
+    "Connect to a meeting from your phone or tablet." : {
+
+    },
+    "Connect to Wi-Fi" : {
+
+    },
+    "Contacts will appear after the directory syncs." : {
+
+    },
+    "Coordinate schedules with your coworkers." : {
+
+    },
+    "Couldn't open form" : {
+
+    },
+    "Couldn't share form" : {
+
+    },
+    "Couldn't update %@. Pull down to retry." : {
+
+    },
+    "Couldn't update the library: %@" : {
+
+    },
+    "Couldn't update this program: %@" : {
+
+    },
+    "Customize Outlook" : {
+
+    },
+    "Data Usage" : {
+
+    },
+    "Device Essentials" : {
+
+    },
+    "Done" : {
+
+    },
+    "Done Markup" : {
+
+    },
+    "Download" : {
+
+    },
+    "Download %@" : {
+
+    },
+    "Download Anyway" : {
+
+    },
+    "Download on open" : {
+
+    },
+    "Downloaded files are available offline. Clearing them frees up space; you'll need a connection to open them again." : {
+
+    },
+    "Downloading %@" : {
+
+    },
+    "Downloading content…" : {
+
+    },
+    "Downloading…" : {
+
+    },
+    "Edit" : {
+
+    },
+    "Email %@, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Email %1$@, %2$@"
+          }
+        }
+      }
+    },
+    "Email and calendar basics" : {
+
+    },
+    "Empty folder" : {
+
+    },
+    "Eraser" : {
+
+    },
+    "Field Resources" : {
+
+    },
+    "Files ready to download" : {
+
+    },
+    "Find a meeting time that works for your coworkers." : {
+
+    },
+    "Find messages, contacts, and attachments quickly." : {
+
+    },
+    "Find shared content and manage mobile conversations." : {
+
+    },
+    "Find your way around messages and calendar events." : {
+
+    },
+    "Folder unavailable" : {
+
+    },
+    "Get comfortable tapping, swiping, and zooming." : {
+
+    },
+    "Get online at work, at home, or on the go." : {
+
+    },
+    "Get started with %@." : {
+
+    },
+    "Get started with your work or school account." : {
+
+    },
+    "Get to know your %@." : {
+
+    },
+    "Getting started guides for iOS from Microsoft" : {
+
+    },
+    "Guides from Apple Support" : {
+
+    },
+    "Guides from Microsoft Support" : {
+
+    },
+    "Guides open on Apple Support and require an internet connection. For a company-managed device, follow your organization's setup instructions." : {
+
+    },
+    "Guides open on Microsoft Support and require an internet connection. Select iOS or Mobile when a guide offers multiple platforms. Follow your organization's instructions for your work account." : {
+
+    },
+    "Home" : {
+
+    },
+    "Join a meeting" : {
+
+    },
+    "Keep a backup of your important information." : {
+
+    },
+    "Keep important messages easy to find." : {
+
+    },
+    "Keep your device up to date." : {
+
+    },
+    "Last synced %@ ago" : {
+
+    },
+    "Learn essential gestures" : {
+
+    },
+    "Let coworkers know your availability." : {
+
+    },
+    "Let people know when you are away." : {
+
+    },
+    "Magnum" : {
+
+    },
+    "MAGNUM • FIELD RESOURCES" : {
+
+    },
+    "Magnum Field Training" : {
+
+    },
+    "Magnum Swag Store" : {
+
+    },
+    "Make calls" : {
+
+    },
+    "Make text easier to read on your device." : {
+
+    },
+    "Manage mobile notifications" : {
+
+    },
+    "Manage your chats" : {
+
+    },
+    "Manage your microphone, camera, and meeting chat." : {
+
+    },
+    "Markup" : {
+
+    },
+    "More Resources" : {
+
+    },
+    "New" : {
+
+    },
+    "New content available" : {
+
+    },
+    "No contacts yet" : {
+
+    },
+    "No matching contacts" : {
+
+    },
+    "No useful links available yet." : {
+
+    },
+    "No walkthroughs yet" : {
+
+    },
+    "Off" : {
+
+    },
+    "OK" : {
+
+    },
+    "On" : {
+
+    },
+    "Opening form…" : {
+
+    },
+    "Opens folder" : {
+
+    },
+    "Opens Microsoft training guides" : {
+
+    },
+    "Opens the guide in your browser" : {
+
+    },
+    "Opens this form" : {
+
+    },
+    "Opens this link" : {
+
+    },
+    "Organize your Focused Inbox" : {
+
+    },
+    "Passionate for What We Do" : {
+
+    },
+    "Pen" : {
+
+    },
+    "Pin" : {
+
+    },
+    "Pin guide" : {
+
+    },
+    "Pinned" : {
+
+    },
+    "Please try again. This guide opens on the publisher's website." : {
+
+    },
+    "Present your iPhone or iPad screen during a meeting and learn how to stop sharing." : {
+
+    },
+    "Recently viewed" : {
+
+    },
+    "Record your screen" : {
+
+    },
+    "Redo" : {
+
+    },
+    "Resources" : {
+
+    },
+    "Respond to meeting invitations" : {
+
+    },
+    "Results (%lld)" : {
+
+    },
+    "Retry" : {
+
+    },
+    "Retrying downloads" : {
+
+    },
+    "Review Form" : {
+
+    },
+    "Scan and sign documents" : {
+
+    },
+    "Schedule a meeting" : {
+
+    },
+    "Search email and files" : {
+
+    },
+    "Search guides and walkthroughs" : {
+
+    },
+    "Search names, emails, or phone numbers" : {
+
+    },
+    "Search this document" : {
+
+    },
+    "Selected" : {
+
+    },
+    "Send a copy using Messages, Mail, AirDrop, or another app" : {
+
+    },
+    "Send documents in chats and channels from your device." : {
+
+    },
+    "Send photos and documents to nearby Apple devices." : {
+
+    },
+    "Set automatic replies" : {
+
+    },
+    "Set up Outlook on iOS" : {
+
+    },
+    "Set up your device" : {
+
+    },
+    "Set your status message" : {
+
+    },
+    "Settings" : {
+
+    },
+    "Share" : {
+
+    },
+    "Share %@" : {
+
+    },
+    "Share and view calendars" : {
+
+    },
+    "Share files" : {
+
+    },
+    "Share with AirDrop" : {
+
+    },
+    "Share your screen" : {
+
+    },
+    "Sign in to Teams" : {
+
+    },
+    "Start here with activation and initial setup." : {
+
+    },
+    "Start with the basics" : {
+
+    },
+    "Storage" : {
+
+    },
+    "Syncing with Dropbox…" : {
+
+    },
+    "Take a screenshot" : {
+
+    },
+    "The essentials for using %@ on your iPhone or iPad." : {
+
+    },
+    "There's nothing in this folder yet." : {
+
+    },
+    "This folder may have been moved or removed." : {
+
+    },
+    "Total" : {
+
+    },
+    "Try a name, email address, or phone number." : {
+
+    },
+    "Try Again" : {
+
+    },
+    "Turn paper documents into scans using Notes." : {
+
+    },
+    "Unable to open file" : {
+
+    },
+    "Unable to open guide" : {
+
+    },
+    "Unable to save form" : {
+
+    },
+    "Unable to share form" : {
+
+    },
+    "Undo" : {
+
+    },
+    "Unlock" : {
+
+    },
+    "Unpin" : {
+
+    },
+    "Unpin guide" : {
+
+    },
+    "Update your software" : {
+
+    },
+    "Use meeting controls" : {
+
+    },
+    "Use Wi-Fi for videos to save cellular data. You can still choose \"Download Anyway\" or download all files. PDFs can download over cellular." : {
+
+    },
+    "Useful Links" : {
+
+    },
+    "We Set the Standard" : {
+
+    },
+    "We Tell It Straight" : {
+
+    },
+    "Wi-Fi Only for Videos" : {
+
+    },
+    "Wi-Fi required" : {
+
+    },
+    "You'll need a connection to re-download them before viewing." : {
+
+    },
+    "You're offline. Downloaded content is available." : {
+
+    },
+    "Your resources will appear here after the first update." : {
+
+    },
+    "Zero Punch" : {
+
+    }
+  },
+  "version" : "1.3"
+}

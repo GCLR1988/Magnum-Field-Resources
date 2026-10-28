@@ -1,0 +1,2 @@
+# Staging credentials belong only on this development machine.
+/StagingCredentials.local.swift
