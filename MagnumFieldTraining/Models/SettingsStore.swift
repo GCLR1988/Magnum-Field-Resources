@@ -16,7 +16,16 @@ final class SettingsStore: ObservableObject {
         }
     }
 
+    @Published var autoDownloadOnWiFi: Bool {
+        didSet {
+            UserDefaults.standard.set(autoDownloadOnWiFi, forKey: "MagnumFieldTraining.autoDownloadOnWiFi")
+        }
+    }
+
     private init() {
+        let autoDownloadKey = "MagnumFieldTraining.autoDownloadOnWiFi"
+        autoDownloadOnWiFi = UserDefaults.standard.object(forKey: autoDownloadKey) == nil
+            ? true : UserDefaults.standard.bool(forKey: autoDownloadKey)
         if UserDefaults.standard.object(forKey: Self.wifiOnlyKey) == nil {
             wifiOnlyForVideos = true
         } else {

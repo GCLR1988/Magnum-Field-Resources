@@ -9,12 +9,12 @@ struct MagnumFieldTrainingApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            AppLockView()
                 .environmentObject(pinnedStore)
                 .environmentObject(catalogStore)
                 .environmentObject(seenStore)
                 .environmentObject(networkMonitor)
-                .fontDesign(.rounded)
+                .modifier(AppLanguageModifier())
         }
     }
 }

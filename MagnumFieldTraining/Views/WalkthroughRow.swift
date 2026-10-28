@@ -7,6 +7,8 @@ import UIKit
 /// Dropbox-backed and not yet downloaded, and a swipe action as a shortcut
 /// to the same pin toggle.
 struct WalkthroughRow: View {
+    @Environment(\.locale) private var locale
+    @EnvironmentObject private var catalogStore: CatalogStore
     @EnvironmentObject private var pinnedStore: PinnedStore
     @EnvironmentObject private var seenStore: SeenStore
     let resource: WalkthroughResource
@@ -17,9 +19,8 @@ struct WalkthroughRow: View {
     /// ProgramDetailView passes this; the Pinned section on the home screen spans
     /// multiple programs and keeps the plain type icon.
     var logo: DropboxFileMetadata? = nil
-    /// Small grey "PDF"/"Video" caption under the title. Off by default so the
-    /// Pinned section's look is unchanged; ProgramDetailView turns it on.
-    var showsTypeLabel: Bool = false
+    /// Identifies the document format and whether a download is needed.
+    var showsTypeLabel: Bool = true
 
     private var isNew: Bool {
         seenStore.isNew(resource.persistenceKey)
@@ -30,55 +31,62 @@ struct WalkthroughRow: View {
     }
 
     var body: some View {
+        let _ = catalogStore.cacheVersion
         HStack(spacing: 12) {
             rowIcon
 
-            VStack(alignment: .center, spacing: 2) {
+            VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 6) {
                     Text(resource.title)
-                        .multilineTextAlignment(.center)
+                        .font(AppStyle.rowTitle)
+                        .multilineTextAlignment(.leading)
                     if isNew {
-                        Text("NEW")
-                            .font(.caption2.weight(.bold))
-                            .foregroundStyle(.white)
+                        Text("New")
+                            .font(.caption2.weight(.medium))
+                            .foregroundStyle(.secondary)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
-                            .background(Color("AccentColor"), in: Capsule())
+                            .background(Color.primary.opacity(0.06), in: Capsule())
+                            .fixedSize()
                     }
                 }
                 if let subtitle {
                     Text(subtitle)
                         .font(.caption)
                         .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
+                        .multilineTextAlignment(.leading)
                 }
                 if showsTypeLabel {
-                    Text(typeLabelText)
+                    Text("\(typeLabelText) · \(needsDownloadIcon ? AppLanguage.string("Download required", locale: locale) : AppLanguage.string("Available offline", locale: locale))")
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                 }
             }
-            .frame(maxWidth: .infinity)
+            .frame(maxWidth: .infinity, alignment: .leading)
 
             Button {
                 pinnedStore.toggle(resource.persistenceKey)
             } label: {
-                Image(systemName: isPinned ? "pin.fill" : "pin")
+                Image(systemName: isPinned ? "bookmark.fill" : "bookmark")
                     .font(.caption)
                     .foregroundStyle(isPinned ? Color("AccentColor") : .secondary)
-                    .frame(width: 24, height: 24)
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
                     .symbolEffect(.bounce, value: isPinned)
             }
             .buttonStyle(.borderless)
+            .accessibilityLabel(isPinned ? "Remove Bookmark" : "Bookmark")
         }
         .contentShape(Rectangle())
+        .bookmarkAction(resource.persistenceKey)
+        .sensoryFeedback(.selection, trigger: isPinned)
         .swipeActions(edge: .leading) {
             Button {
                 pinnedStore.toggle(resource.persistenceKey)
             } label: {
                 Label(
-                    isPinned ? "Unpin" : "Pin",
-                    systemImage: isPinned ? "pin.slash" : "pin"
+                    isPinned ? "Remove Bookmark" : "Bookmark",
+                    systemImage: isPinned ? "bookmark.slash" : "bookmark"
                 )
             }
             .tint(Color("AccentColor"))
@@ -94,6 +102,8 @@ struct WalkthroughRow: View {
             return "doc.text.fill"
         case .video:
             return "play.rectangle.fill"
+        case .document:
+            return "doc.fill"
         }
     }
 
@@ -106,7 +116,7 @@ struct WalkthroughRow: View {
             return Color("AccentColor")
         }
         switch resource.kind {
-        case .pdf:
+        case .pdf, .document:
             return Color("AccentColor")
         case .video:
             return Color("VideoAccent")
@@ -131,19 +141,18 @@ struct WalkthroughRow: View {
                 .scaledToFit()
                 .frame(width: 20, height: 20)
                 .frame(width: 32, height: 32)
-                .background(Color("WarmBackground"), in: Circle())
+                .background(Color("WarmBackground"), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
         } else {
             Image(systemName: iconName)
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(iconColor)
                 .frame(width: 32, height: 32)
-                .background(iconColor.opacity(0.15), in: Circle())
+                .background(iconColor.opacity(0.15), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
         }
     }
 
     private func cachedLogoImage(_ file: DropboxFileMetadata) -> Image? {
-        guard MediaCache.shared.isCached(file),
-              let uiImage = UIImage(contentsOfFile: MediaCache.shared.localURL(for: file).path) else {
+        guard let uiImage = LogoImageCache.shared.image(for: file) else {
             return nil
         }
         return Image(uiImage: uiImage)
@@ -154,7 +163,9 @@ struct WalkthroughRow: View {
         case .pdf:
             return "PDF"
         case .video:
-            return "Video"
+            return AppLanguage.string("Video", locale: locale)
+        case .document:
+            return AppLanguage.string("Document", locale: locale)
         }
     }
 }

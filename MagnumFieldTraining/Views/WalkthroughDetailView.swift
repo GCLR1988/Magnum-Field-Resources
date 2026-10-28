@@ -3,6 +3,41 @@ import PDFKit
 import AVKit
 import AVFoundation
 import Combine
+import QuickLook
+
+private struct FormDocumentPreview: UIViewControllerRepresentable {
+    let url: URL
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(url: url)
+    }
+
+    func makeUIViewController(context: Context) -> QLPreviewController {
+        let controller = QLPreviewController()
+        controller.dataSource = context.coordinator
+        return controller
+    }
+
+    func updateUIViewController(_ controller: QLPreviewController, context: Context) {
+        guard context.coordinator.url != url else { return }
+        context.coordinator.url = url
+        controller.reloadData()
+    }
+
+    final class Coordinator: NSObject, QLPreviewControllerDataSource {
+        var url: URL
+
+        init(url: URL) {
+            self.url = url
+        }
+
+        func numberOfPreviewItems(in controller: QLPreviewController) -> Int { 1 }
+
+        func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> any QLPreviewItem {
+            url as NSURL
+        }
+    }
+}
 
 struct WalkthroughDetailView: View {
     @EnvironmentObject private var pinnedStore: PinnedStore
@@ -10,11 +45,15 @@ struct WalkthroughDetailView: View {
     @EnvironmentObject private var catalogStore: CatalogStore
     let resource: WalkthroughResource
 
+    @State private var previewURL: URL?
     @State private var pdfDocument: PDFDocument?
     @State private var player: AVPlayer?
-    @State private var isLoading = false
+    @State private var isLoading = true
+    @State private var isVisible = false
+    @State private var forceDownloadTask: Task<Void, Never>?
     @State private var errorMessage: String?
     @State private var cellularDownloadBlocked = false
+    @State private var shouldRetryVideoDownload = false
     /// Watches the current video's `AVPlayerItem` for a hard failure (a corrupted or
     /// truncated download, most often) so that case gets the same "couldn't load"
     /// messaging a broken PDF already gets, instead of leaving a foreman looking at a
@@ -31,6 +70,7 @@ struct WalkthroughDetailView: View {
     @State private var searchResults: [PDFSelection] = []
     @State private var currentResultIndex = 0
     @State private var searchTask: Task<Void, Never>?
+    @State private var documentSearch: PDFSearchSession?
 
     var body: some View {
         Group {
@@ -40,22 +80,31 @@ struct WalkthroughDetailView: View {
             } else if let player {
                 VideoPlayer(player: player)
                     .ignoresSafeArea(edges: .bottom)
+            } else if let previewURL {
+                FormDocumentPreview(url: previewURL)
+                    .ignoresSafeArea(edges: .bottom)
             } else if isLoading {
-                ProgressView("Downloading\u{2026}")
+                ResourceLoadingView(title: "Opening file…")
             } else {
                 EmptyStateCard {
-                    ContentUnavailableView {
-                        Label(
-                            resource.kind == .video ? "Video Not Found" : "PDF Not Found",
-                            systemImage: cellularDownloadBlocked ? "wifi.slash" : "exclamationmark.triangle"
+                    VStack(spacing: 16) {
+                        EmptyStateMessage(
+                            title: cellularDownloadBlocked ? "Wi-Fi required" : "Unable to open file",
+                            systemImage: cellularDownloadBlocked ? "wifi.slash" : "doc.badge.ellipsis",
+                            message: Text(errorMessage ?? AppLanguage.string("Please try opening this file again."))
                         )
-                    } description: {
-                        Text(errorMessage ?? "Couldn't load this file.")
-                    } actions: {
                         if cellularDownloadBlocked {
                             Button("Download Anyway") {
-                                Task { await forceDownload() }
+                                forceDownloadTask = Task { await forceDownload() }
                             }
+                            .buttonStyle(.borderedProminent)
+                            .tint(AppStyle.accent)
+                        } else {
+                            Button("Try Again") {
+                                forceDownloadTask = Task { await load() }
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .tint(AppStyle.accent)
                         }
                     }
                 }
@@ -79,7 +128,7 @@ struct WalkthroughDetailView: View {
                         withAnimation {
                             isSearching.toggle()
                             if !isSearching {
-                                searchTask?.cancel()
+                                cancelSearch()
                                 searchText = ""
                                 searchResults = []
                                 pdfView.clearSelection()
@@ -94,10 +143,11 @@ struct WalkthroughDetailView: View {
                 Button {
                     pinnedStore.toggle(resource.persistenceKey)
                 } label: {
-                    Image(systemName: pinnedStore.isPinned(resource.persistenceKey) ? "pin.fill" : "pin")
+                    Image(systemName: pinnedStore.isPinned(resource.persistenceKey) ? "bookmark.fill" : "bookmark")
                         .symbolEffect(.bounce, value: pinnedStore.isPinned(resource.persistenceKey))
                 }
                 .tint(Color("AccentColor"))
+                .accessibilityLabel(pinnedStore.isPinned(resource.persistenceKey) ? "Remove Bookmark" : "Bookmark")
             }
         }
         .safeAreaInset(edge: .top) {
@@ -140,10 +190,18 @@ struct WalkthroughDetailView: View {
             }
         }
         .task {
-            seenStore.markSeen([resource.persistenceKey])
+            isVisible = true
+            // Preserve the current page and zoom when returning from another presentation.
+            if pdfDocument != nil || previewURL != nil {
+                if isSearching { scheduleSearch() }
+                return
+            }
             await load()
         }
         .onDisappear {
+            isVisible = false
+            forceDownloadTask?.cancel()
+            cancelSearch()
             // Videos put the audio session into `.playback` (see
             // configureAudioSessionForPlayback) so training audio isn't silenced by
             // the ring/silent switch. Left active after leaving this screen, that
@@ -153,15 +211,14 @@ struct WalkthroughDetailView: View {
             guard resource.kind == .video else { return }
             playerStatusSubscription?.cancel()
             player?.pause()
-            Task.detached(priority: .utility) {
-                try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-            }
+            Task { await deactivateAudioSession() }
         }
     }
 
     private func load() async {
         isLoading = true
         cellularDownloadBlocked = false
+        errorMessage = nil
         defer { isLoading = false }
 
         switch resource.location {
@@ -169,28 +226,32 @@ struct WalkthroughDetailView: View {
             let base = (filename as NSString).deletingPathExtension
             let ext = (filename as NSString).pathExtension
             guard let url = Bundle.main.url(forResource: base, withExtension: ext.isEmpty ? nil : ext) else {
-                errorMessage = "Couldn't find \"\(filename)\" in the app bundle. Make sure it's in the PDFs folder and checked under Target Membership."
+                errorMessage = AppLanguage.string("This file is missing from the training library. Contact your administrator for help.")
                 return
             }
             await apply(url)
 
         case .dropbox(let file):
             do {
-                let wasCached = MediaCache.shared.isCached(file)
+                if shouldRetryVideoDownload {
+                    await MediaCache.shared.invalidateCachedRevision(for: file)
+                    shouldRetryVideoDownload = false
+                }
+                let neededDownload = await MediaCache.shared.needsDownload(file)
                 let allowCellular = !SettingsStore.shared.wifiOnlyForVideos
-                let url = try await MediaCache.shared.ensureCached(file, allowCellular: allowCellular)
-                if !wasCached {
+                let url = try await MediaCache.shared.availableURL(for: file, allowCellular: allowCellular)
+                if neededDownload {
                     // Downloaded here rather than through CatalogStore's own sync/downloadAll
                     // (e.g. a foreman opened a file that wasn't pre-cached) -- bump
                     // cacheVersion so this file's row updates its cloud icon once we go back.
-                    catalogStore.noteFileCached()
+                    await catalogStore.noteFileCached()
                 }
                 await apply(url)
             } catch MediaCacheError.wifiRequired {
                 cellularDownloadBlocked = true
-                errorMessage = "This video isn't downloaded yet, and you're not on Wi-Fi."
+                errorMessage = AppLanguage.string("This video isn't downloaded yet, and you're not on Wi-Fi.")
             } catch {
-                errorMessage = "Couldn't get \(file.name) from Dropbox: \(error.localizedDescription)"
+                errorMessage = AppLanguage.string("Couldn't get \(file.name) from Dropbox: \(error.localizedDescription)")
             }
         }
     }
@@ -203,31 +264,55 @@ struct WalkthroughDetailView: View {
         errorMessage = nil
         defer { isLoading = false }
         do {
-            let wasCached = MediaCache.shared.isCached(file)
+            let neededDownload = await MediaCache.shared.needsDownload(file)
             let url = try await MediaCache.shared.ensureCached(file, allowCellular: true)
-            if !wasCached {
-                catalogStore.noteFileCached()
+            if neededDownload {
+                await catalogStore.noteFileCached()
             }
             await apply(url)
         } catch {
-            errorMessage = "Couldn't get \(file.name) from Dropbox: \(error.localizedDescription)"
+            errorMessage = AppLanguage.string("Couldn't get \(file.name) from Dropbox: \(error.localizedDescription)")
         }
     }
 
     private func apply(_ url: URL) async {
+        // Shared cache downloads can finish after this screen's task is cancelled.
+        guard isVisible, !Task.isCancelled else { return }
         switch resource.kind {
+        case .document:
+            previewURL = url
+            recordOpenedFile()
         case .pdf:
-            pdfDocument = PDFDocument(url: url)
-            if pdfDocument == nil {
-                errorMessage = "Couldn't open \"\(resource.title)\" as a PDF."
+            do {
+                let document = try await FormDocumentLoader.load(from: url)
+                guard isVisible, !Task.isCancelled else { return }
+                pdfDocument = document
+                recordOpenedFile()
+            } catch is CancellationError {
+                return
+            } catch {
+                guard isVisible, !Task.isCancelled else { return }
+                if case .dropbox(let file) = resource.location {
+                    await MediaCache.shared.invalidateCachedRevision(for: file)
+                }
+                errorMessage = AppLanguage.string("Couldn't open \"\(resource.title)\" as a PDF.")
             }
         case .video:
             await configureAudioSessionForPlayback()
+            guard isVisible, !Task.isCancelled else {
+                await deactivateAudioSession()
+                return
+            }
             let newPlayer = AVPlayer(url: url)
             observePlaybackFailures(of: newPlayer)
             player = newPlayer
             newPlayer.play()
         }
+    }
+
+    private func recordOpenedFile() {
+        seenStore.markSeen([resource.persistenceKey])
+        RecentStore.shared.record(resource.persistenceKey)
     }
 
     /// Surfaces a video that fails to load (e.g. an interrupted or corrupted
@@ -238,9 +323,16 @@ struct WalkthroughDetailView: View {
             .compactMap { $0 }
             .receive(on: DispatchQueue.main)
             .sink { status in
+                guard isVisible, player === newPlayer else { return }
+                if status == .readyToPlay {
+                    recordOpenedFile()
+                    return
+                }
                 guard status == .failed else { return }
+                shouldRetryVideoDownload = true
+                newPlayer.pause()
                 let reason = newPlayer.currentItem?.error?.localizedDescription
-                errorMessage = "Couldn't play \"\(resource.title)\"" + (reason.map { ": \($0)" } ?? ".")
+                errorMessage = AppLanguage.string("Couldn't play \(resource.title): \(reason ?? "")")
                 player = nil
             }
     }
@@ -271,34 +363,40 @@ struct WalkthroughDetailView: View {
         }.value
     }
 
-    // MARK: - In-document search
-
-    /// Debounces search-as-you-type: PDFDocument.findString is a synchronous,
-    /// potentially slow scan of the whole document, and running it on the main
-    /// thread on every single keystroke could make typing visibly stutter on a
-    /// long walkthrough. Waiting for a short pause in typing keeps it off the
-    /// critical path of every keystroke without changing the PDFKit threading.
-    private func scheduleSearch() {
-        searchTask?.cancel()
-        searchTask = Task {
-            try? await Task.sleep(nanoseconds: 250_000_000)
-            guard !Task.isCancelled else { return }
-            performSearch()
-        }
+    private func deactivateAudioSession() async {
+        await Task.detached(priority: .utility) {
+            try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        }.value
     }
 
-    private func performSearch() {
+    // MARK: - In-document search
+
+    private func cancelSearch() {
+        searchTask?.cancel()
+        documentSearch?.cancel()
+        documentSearch = nil
+    }
+
+    /// Debounce typing, then let PDFKit search asynchronously so long PDFs don't freeze the UI.
+    private func scheduleSearch() {
+        cancelSearch()
         searchResults = []
         currentResultIndex = 0
-        guard let pdfDocument, !searchText.isEmpty else {
-            pdfView.clearSelection()
-            return
-        }
-        searchResults = pdfDocument.findString(searchText, withOptions: [.caseInsensitive])
-        if let first = searchResults.first {
-            highlight(first)
-        } else {
-            pdfView.clearSelection()
+        pdfView.clearSelection()
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard isSearching, !query.isEmpty else { return }
+        searchTask = Task {
+            do {
+                try await Task.sleep(for: .milliseconds(250))
+            } catch { return }
+            guard !Task.isCancelled, isVisible, isSearching, let pdfDocument else { return }
+            let session = PDFSearchSession(document: pdfDocument) { results in
+                searchResults = results
+                currentResultIndex = 0
+                if let first = results.first { highlight(first) }
+            }
+            documentSearch = session
+            session.start(query)
         }
     }
 
@@ -317,5 +415,43 @@ struct WalkthroughDetailView: View {
         guard !searchResults.isEmpty else { return }
         currentResultIndex = (currentResultIndex - 1 + searchResults.count) % searchResults.count
         highlight(searchResults[currentResultIndex])
+    }
+}
+
+// PDFKit's Objective-C delegate protocol has no actor annotations. Searches are
+// started on the main actor; @preconcurrency checks that isolation at callback time.
+@MainActor
+final class PDFSearchSession: NSObject, @preconcurrency PDFDocumentDelegate {
+    private let document: PDFDocument
+    private var results: [PDFSelection] = []
+    private var completion: (([PDFSelection]) -> Void)?
+
+    init(document: PDFDocument, completion: @escaping ([PDFSelection]) -> Void) {
+        self.document = document
+        self.completion = completion
+    }
+
+    func start(_ query: String) {
+        document.delegate = self
+        document.beginFindString(query, withOptions: [.caseInsensitive])
+    }
+
+    func didMatchString(_ instance: PDFSelection) {
+        results.append(instance)
+    }
+
+    func documentDidEndDocumentFind(_ notification: Notification) {
+        let callback = completion
+        completion = nil
+        document.delegate = nil
+        callback?(results)
+    }
+
+    func cancel() {
+        // Detach before cancelling, since cancellation can emit an end-of-search callback.
+        completion = nil
+        document.delegate = nil
+        document.cancelFindString()
+        results.removeAll()
     }
 }

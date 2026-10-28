@@ -5,7 +5,7 @@ import Foundation
 /// program organize a large set of PDFs/videos into folders instead of one long flat
 /// list, mirroring whatever folder structure exists in that program's Dropbox folder.
 /// Subfolders can nest to any depth; the app just renders whatever it finds.
-struct WalkthroughFolder: Identifiable, Hashable {
+struct WalkthroughFolder: Identifiable, Hashable, Codable {
     /// Stable Dropbox path (lowercased), e.g. "/procore/estimating" -- or the
     /// program's own id, for a `.local` program's single (subfolder-less) root.
     let id: String
@@ -13,12 +13,28 @@ struct WalkthroughFolder: Identifiable, Hashable {
     /// Files directly in this folder (not its subfolders).
     let resources: [WalkthroughResource]
     let subfolders: [WalkthroughFolder]
+    var logo: DropboxFileMetadata? = nil
+
+    var allLogos: [DropboxFileMetadata] {
+        (logo.map { [$0] } ?? []) + subfolders.flatMap(\.allLogos)
+    }
 
     /// This folder's own files plus every file in every folder nested inside it,
     /// flattened -- used wherever the app needs "everything in this program"
     /// regardless of how it's organized into folders (counts, caching, pinning).
     var allResources: [WalkthroughResource] {
         resources + subfolders.flatMap { $0.allResources }
+    }
+
+    /// This folder, or the subfolder nested anywhere inside it, with the given id.
+    /// Lets a pushed subfolder screen re-find its own folder in a freshly-synced
+    /// tree, so it shows live contents instead of the snapshot it was pushed with.
+    func folder(withID id: String) -> WalkthroughFolder? {
+        if self.id == id { return self }
+        for child in subfolders {
+            if let match = child.folder(withID: id) { return match }
+        }
+        return nil
     }
 }
 
@@ -33,7 +49,8 @@ extension WalkthroughFolder {
         rootID: String,
         rootName: String,
         media: [DropboxFileMetadata],
-        subfolders: [DropboxService.FolderContents.Subfolder]
+        subfolders: [DropboxService.FolderContents.Subfolder],
+        logosByFolder: [String: DropboxFileMetadata] = [:]
     ) -> WalkthroughFolder {
         func parentPath(of path: String) -> String {
             let parent = (path as NSString).deletingLastPathComponent
@@ -56,7 +73,7 @@ extension WalkthroughFolder {
             let children = (subfoldersByParent[path] ?? [])
                 .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
                 .map { node(path: $0.path, id: $0.path, name: $0.name) }
-            return WalkthroughFolder(id: id, name: name, resources: resources, subfolders: children)
+            return WalkthroughFolder(id: id, name: name, resources: resources, subfolders: children, logo: logosByFolder[path])
         }
 
         let normalizedRoot = rootPath.isEmpty ? "/" : rootPath.lowercased()

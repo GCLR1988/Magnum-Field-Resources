@@ -20,4 +20,6 @@ let package = Package(
     swiftLanguageModes: [.v5]
 )
 SWIFT
-swift test --disable-sandbox --package-path "$test_dir"
+export CLANG_MODULE_CACHE_PATH="$test_dir/module-cache"
+export SWIFTPM_MODULECACHE_OVERRIDE="$test_dir/module-cache"
+swift test --disable-sandbox --cache-path "$test_dir/cache" --package-path "$test_dir"

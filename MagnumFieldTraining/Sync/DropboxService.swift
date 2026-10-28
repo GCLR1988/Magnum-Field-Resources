@@ -14,6 +14,7 @@ enum DropboxService {
         let media: [DropboxFileMetadata]
         let logo: DropboxFileMetadata?
         let subfolders: [Subfolder]
+        var logosByFolder: [String: DropboxFileMetadata] = [:]
 
         /// A subfolder found anywhere under a program's Dropbox folder, at any depth.
         struct Subfolder {
@@ -39,10 +40,11 @@ enum DropboxService {
         let name: String?
         let path_lower: String?
         let rev: String?
+        let server_modified: String?
 
         private enum CodingKeys: String, CodingKey {
             case tag = ".tag"
-            case id, name, path_lower, rev
+            case id, name, path_lower, rev, server_modified
         }
     }
 
@@ -53,29 +55,43 @@ enum DropboxService {
     /// "logo.png"/"logo.jpg"/"logo.jpeg" (case-insensitive), used as that program's
     /// tile icon instead of the generic folder icon. `path` is relative to the app's
     /// dedicated Dropbox folder, e.g. "/Procore".
-    static func listFolderContents(path: String) async throws -> FolderContents {
+    static func listFolderContents(path: String, includeAllFiles: Bool = false) async throws -> FolderContents {
         let allEntries = try await listAllEntries(path: path, recursive: true)
         let files = allEntries.compactMap { entry -> DropboxFileMetadata? in
             guard entry.tag == "file",
                   let id = entry.id, let name = entry.name,
                   let pathLower = entry.path_lower, let rev = entry.rev else { return nil }
-            return DropboxFileMetadata(id: id, name: name, pathLower: pathLower, rev: rev)
+            return DropboxFileMetadata(id: id, name: name, pathLower: pathLower, rev: rev, serverModified: entry.server_modified)
         }
-        let media = files.filter { isSupportedMediaFile($0.name) }
 
-        // Only a logo dropped directly in the program's own root counts -- one dropped
-        // inside a subfolder is just treated as a regular (oddly-named) walkthrough file.
-        let rootLower = path.lowercased()
-        let logo = files.first { file in
-            isLogoFile(file.name) && (file.pathLower as NSString).deletingLastPathComponent == rootLower
+        let rootLower = path.isEmpty ? "/" : path.lowercased()
+        let images = files.filter { logoExtensions.contains(($0.name as NSString).pathExtension.lowercased()) }
+        let imagesByFolder = Dictionary(grouping: images) {
+            ($0.pathLower as NSString).deletingLastPathComponent
         }
+        var logosByFolder: [String: DropboxFileMetadata] = [:]
+        for (folder, candidates) in imagesByFolder {
+            let sorted = candidates.sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+            if let namedLogo = sorted.first(where: { isLogoFile($0.name) }) {
+                logosByFolder[folder] = namedLogo
+            } else if !includeAllFiles, sorted.count == 1 {
+                // Training folders may contain one supplied picture without a "logo" filename.
+                logosByFolder[folder] = sorted.first
+            }
+        }
+        let logo = logosByFolder[rootLower]
 
         let subfolders = allEntries.compactMap { entry -> FolderContents.Subfolder? in
             guard entry.tag == "folder", let name = entry.name, let pathLower = entry.path_lower else { return nil }
             return FolderContents.Subfolder(path: pathLower, name: name)
         }
 
-        return FolderContents(media: media, logo: logo, subfolders: subfolders)
+        // Artwork is decoration, including inside nested folders.
+        let artworkIDs = Set(logosByFolder.values.map(\.id))
+        let media = files.filter {
+            !artworkIDs.contains($0.id) && (includeAllFiles || isSupportedMediaFile($0.name))
+        }
+        return FolderContents(media: media, logo: logo, subfolders: subfolders, logosByFolder: logosByFolder)
     }
 
     /// Lists the names of subfolders directly inside the given folder path (relative to the
@@ -85,6 +101,17 @@ enum DropboxService {
         return allEntries.compactMap { entry in
             guard entry.tag == "folder", let name = entry.name else { return nil }
             return name
+        }
+    }
+
+    /// Spreadsheet resources can live at the app root or within a resource folder.
+    static func listResourceSpreadsheets() async throws -> [DropboxFileMetadata] {
+        let entries = try await listAllEntries(path: "", recursive: true)
+        let names: Set<String> = ["company directory.xlsx", "employee directory.xlsx", "useful links.xlsx"]
+        return entries.compactMap { entry in
+            guard entry.tag == "file", let name = entry.name, names.contains(name.lowercased()),
+                  let id = entry.id, let path = entry.path_lower, let rev = entry.rev else { return nil }
+            return DropboxFileMetadata(id: id, name: name, pathLower: path, rev: rev, serverModified: entry.server_modified)
         }
     }
 
@@ -144,7 +171,7 @@ enum DropboxService {
     }
 
     /// Downloads a file's content to a local destination URL.
-    static func download(_ file: DropboxFileMetadata, to destination: URL) async throws {
+    static func download(_ file: DropboxFileMetadata, to destination: URL, allowCellular: Bool = true) async throws {
         let token = try await DropboxAuthService.shared.accessToken()
         guard let url = URL(string: "https://content.dropboxapi.com/2/files/download") else {
             throw DropboxError.requestFailed("Invalid Dropbox request URL.")
@@ -152,14 +179,35 @@ enum DropboxService {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        let argJSON = try JSONEncoder().encode(["path": file.pathLower])
+        request.allowsCellularAccess = allowCellular
+        let argJSON = try JSONEncoder().encode(["path": "rev:\(file.rev)"])
         request.setValue(String(data: argJSON, encoding: .utf8), forHTTPHeaderField: "Dropbox-API-Arg")
 
-        let (tempURL, urlResponse) = try await URLSession.shared.download(for: request)
-        guard let http = urlResponse as? HTTPURLResponse, http.statusCode == 200 else {
-            throw DropboxError.requestFailed("Couldn't download \(file.name).")
+        for attempt in 0..<3 {
+            try Task.checkCancellation()
+            do {
+                let (tempURL, urlResponse) = try await URLSession.shared.download(for: request)
+                defer { try? FileManager.default.removeItem(at: tempURL) }
+                guard let http = urlResponse as? HTTPURLResponse else {
+                    throw DropboxError.requestFailed("No response while downloading \(file.name).")
+                }
+                guard http.statusCode == 200 else {
+                    if http.statusCode == 429 || (500...599).contains(http.statusCode) {
+                        throw DownloadRetryPolicy.TemporaryHTTPError(
+                            status: http.statusCode,
+                            retryAfter: http.value(forHTTPHeaderField: "Retry-After").flatMap(Double.init)
+                        )
+                    }
+                    throw DropboxError.requestFailed("Couldn't download \(file.name) (HTTP \(http.statusCode)).")
+                }
+                try Task.checkCancellation()
+                try FileManager.default.moveOrReplaceItem(at: tempURL, to: destination)
+                return
+            } catch {
+                guard let delay = DownloadRetryPolicy.delay(for: error, attempt: attempt) else { throw error }
+                try await Task.sleep(for: .seconds(delay))
+            }
         }
-        try FileManager.default.moveOrReplaceItem(at: tempURL, to: destination)
     }
 
     private static func checkOK(_ response: URLResponse, data: Data, context: String) throws {

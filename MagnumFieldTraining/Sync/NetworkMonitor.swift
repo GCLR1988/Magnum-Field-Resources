@@ -26,14 +26,17 @@ final class NetworkMonitor: ObservableObject {
     }
 
     @Published private(set) var isConnected = true
+    @Published private(set) var isWiFiConnected = false
 
     private init() {
         monitor.pathUpdateHandler = { [weak self] path in
             guard let self else { return }
-            self.wifiState.withLock { $0 = path.usesInterfaceType(.wifi) }
             let connected = path.status == .satisfied
+            let wifi = connected && path.usesInterfaceType(.wifi)
+            self.wifiState.withLock { $0 = wifi }
             DispatchQueue.main.async {
                 self.isConnected = connected
+                self.isWiFiConnected = wifi
             }
         }
         monitor.start(queue: queue)

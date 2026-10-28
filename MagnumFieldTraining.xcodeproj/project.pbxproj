@@ -27,6 +27,38 @@
 		A9C056B1FB5BBD69A343FF43 /* DropboxConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2058DFAE2FECB41646D59F3E /* DropboxConfig.swift */; };
 		D35CCD1FC98DD57F46AA763C /* WalkthroughRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAE826B0B6AD4ADB5739114E /* WalkthroughRow.swift */; };
 		D60C5CB9D1BA4D4FBB09E703 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FA4D36E7E34DBABB3FF701 /* NetworkMonitor.swift */; };
+		E2246860309286DC00BD5C10 /* BookmarkAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E224685F309286DC00BD5C10 /* BookmarkAction.swift */; };
+		E2246862309288A000BD5C10 /* AppGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2246861309288A000BD5C10 /* AppGuideView.swift */; };
+		E27FA688308D7495000F6AA2 /* DeviceGettingStartedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27FA687308D7495000F6AA2 /* DeviceGettingStartedView.swift */; };
+		E27FA68A308D7495000F6AA2 /* TrainingIntroduction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27FA689308D7495000F6AA2 /* TrainingIntroduction.swift */; };
+		E27FA68C308D758A000F6AA2 /* MicrosoftGettingStartedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27FA68B308D758A000F6AA2 /* MicrosoftGettingStartedView.swift */; };
+		E27FA68E308D77B6000F6AA2 /* RecentStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27FA68D308D77B6000F6AA2 /* RecentStore.swift */; };
+		E27FA690308D77B6000F6AA2 /* WebGuideCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27FA68F308D77B6000F6AA2 /* WebGuideCatalog.swift */; };
+		E27FA692308D77CF000F6AA2 /* WebGuideRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27FA691308D77CF000F6AA2 /* WebGuideRow.swift */; };
+		E27FA694308D77CF000F6AA2 /* LibraryDiscoverySections.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27FA693308D77CF000F6AA2 /* LibraryDiscoverySections.swift */; };
+		E27FA696308D7A76000F6AA2 /* LogoImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27FA695308D7A76000F6AA2 /* LogoImageCache.swift */; };
+		E27FA698308D7A92000F6AA2 /* DownloadRetryPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27FA697308D7A92000F6AA2 /* DownloadRetryPolicy.swift */; };
+		E27FA69A308D7AB4000F6AA2 /* DownloadRecoveryNotice.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27FA699308D7AB4000F6AA2 /* DownloadRecoveryNotice.swift */; };
+		E27FA69C308D8580000F6AA2 /* FormExportFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27FA69B308D8580000F6AA2 /* FormExportFile.swift */; };
+		E2A5A1E2309152A10014CC28 /* AppLockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A5A1E1309152A10014CC28 /* AppLockView.swift */; };
+		E2C50D7830913FD600113F1B /* StagingCredentials.local.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C50D7730913FD600113F1B /* StagingCredentials.local.swift */; };
+		E2C50D7A3091479E00113F1B /* FillableFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C50D793091479E00113F1B /* FillableFormView.swift */; };
+		E2C50D7C3091489A00113F1B /* SigningPDFView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C50D7B3091489A00113F1B /* SigningPDFView.swift */; };
+		E2CD14643091689D00ACEBB8 /* ResourceTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CD14633091689D00ACEBB8 /* ResourceTile.swift */; };
+		E2CD14673091733900ACEBB8 /* MagnumFieldTraining-InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = E2CD14663091733900ACEBB8 /* MagnumFieldTraining-InfoPlist.xcstrings */; };
+		E2CD14683091733900ACEBB8 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = E2CD14653091733900ACEBB8 /* Localizable.xcstrings */; };
+		E2CD146A3091736B00ACEBB8 /* RecentlyUpdatedResource.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CD14693091736B00ACEBB8 /* RecentlyUpdatedResource.swift */; };
+		E2CD146C3091737C00ACEBB8 /* AppLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CD146B3091737C00ACEBB8 /* AppLanguage.swift */; };
+		E2CD146E3091870A00ACEBB8 /* AppStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CD146D3091870A00ACEBB8 /* AppStyle.swift */; };
+		E2CD147030918A3F00ACEBB8 /* HardHatGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CD146F30918A3F00ACEBB8 /* HardHatGame.swift */; };
+		E2CD147230918A3F00ACEBB8 /* HardHatScores.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CD147130918A3F00ACEBB8 /* HardHatScores.swift */; };
+		E2CD147430918A9600ACEBB8 /* HardHatGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CD147330918A9600ACEBB8 /* HardHatGameView.swift */; };
+		E2CD1476309191AC00ACEBB8 /* ScanAndSendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CD1475309191AC00ACEBB8 /* ScanAndSendView.swift */; };
+		E2FEF29A30913763009B54CA /* ExcelWorkbook.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FEF29930913763009B54CA /* ExcelWorkbook.swift */; };
+		E2FEF29C30913778009B54CA /* SpreadsheetResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FEF29B30913778009B54CA /* SpreadsheetResources.swift */; };
+		E2FEF29E30913794009B54CA /* SpreadsheetStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FEF29D30913794009B54CA /* SpreadsheetStore.swift */; };
+		E2FEF2A0309137BE009B54CA /* CompanyDirectoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FEF29F309137BE009B54CA /* CompanyDirectoryView.swift */; };
+		E2FEF2A2309137BE009B54CA /* SpreadsheetPreviewSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FEF2A1309137BE009B54CA /* SpreadsheetPreviewSettings.swift */; };
 		E6249C9ED1A948A9B37DD07F /* SeenStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958B717D7F5845E2898624EE /* SeenStore.swift */; };
 		E7416CF34E1830D1B3E269F4 /* MagnumFieldTrainingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE60A5B876E7413ACC17889A /* MagnumFieldTrainingApp.swift */; };
 		F653414765A25CF0F919E9B7 /* WalkthroughDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054C29D10A5CB8D6633ACB09 /* WalkthroughDetailView.swift */; };
@@ -61,6 +93,38 @@
 		D5A489F3B3F84CD895BAC007 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		D66D75169D64BEB98AC6BD75 /* PDFs */ = {isa = PBXFileReference; lastKnownFileType = folder; path = PDFs; sourceTree = "<group>"; };
 		DD16C354868A8ED1FC7B9771 /* PDFKitRepresentedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFKitRepresentedView.swift; sourceTree = "<group>"; };
+		E224685F309286DC00BD5C10 /* BookmarkAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarkAction.swift; sourceTree = "<group>"; };
+		E2246861309288A000BD5C10 /* AppGuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppGuideView.swift; sourceTree = "<group>"; };
+		E27FA687308D7495000F6AA2 /* DeviceGettingStartedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceGettingStartedView.swift; sourceTree = "<group>"; };
+		E27FA689308D7495000F6AA2 /* TrainingIntroduction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingIntroduction.swift; sourceTree = "<group>"; };
+		E27FA68B308D758A000F6AA2 /* MicrosoftGettingStartedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicrosoftGettingStartedView.swift; sourceTree = "<group>"; };
+		E27FA68D308D77B6000F6AA2 /* RecentStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentStore.swift; sourceTree = "<group>"; };
+		E27FA68F308D77B6000F6AA2 /* WebGuideCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebGuideCatalog.swift; sourceTree = "<group>"; };
+		E27FA691308D77CF000F6AA2 /* WebGuideRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebGuideRow.swift; sourceTree = "<group>"; };
+		E27FA693308D77CF000F6AA2 /* LibraryDiscoverySections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryDiscoverySections.swift; sourceTree = "<group>"; };
+		E27FA695308D7A76000F6AA2 /* LogoImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogoImageCache.swift; sourceTree = "<group>"; };
+		E27FA697308D7A92000F6AA2 /* DownloadRetryPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadRetryPolicy.swift; sourceTree = "<group>"; };
+		E27FA699308D7AB4000F6AA2 /* DownloadRecoveryNotice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadRecoveryNotice.swift; sourceTree = "<group>"; };
+		E27FA69B308D8580000F6AA2 /* FormExportFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormExportFile.swift; sourceTree = "<group>"; };
+		E2A5A1E1309152A10014CC28 /* AppLockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockView.swift; sourceTree = "<group>"; };
+		E2C50D7730913FD600113F1B /* StagingCredentials.local.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StagingCredentials.local.swift; sourceTree = "<group>"; };
+		E2C50D793091479E00113F1B /* FillableFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FillableFormView.swift; sourceTree = "<group>"; };
+		E2C50D7B3091489A00113F1B /* SigningPDFView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningPDFView.swift; sourceTree = "<group>"; };
+		E2CD14633091689D00ACEBB8 /* ResourceTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceTile.swift; sourceTree = "<group>"; };
+		E2CD14653091733900ACEBB8 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		E2CD14663091733900ACEBB8 /* MagnumFieldTraining-InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = "MagnumFieldTraining-InfoPlist.xcstrings"; sourceTree = "<group>"; };
+		E2CD14693091736B00ACEBB8 /* RecentlyUpdatedResource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentlyUpdatedResource.swift; sourceTree = "<group>"; };
+		E2CD146B3091737C00ACEBB8 /* AppLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguage.swift; sourceTree = "<group>"; };
+		E2CD146D3091870A00ACEBB8 /* AppStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStyle.swift; sourceTree = "<group>"; };
+		E2CD146F30918A3F00ACEBB8 /* HardHatGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HardHatGame.swift; sourceTree = "<group>"; };
+		E2CD147130918A3F00ACEBB8 /* HardHatScores.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HardHatScores.swift; sourceTree = "<group>"; };
+		E2CD147330918A9600ACEBB8 /* HardHatGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HardHatGameView.swift; sourceTree = "<group>"; };
+		E2CD1475309191AC00ACEBB8 /* ScanAndSendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanAndSendView.swift; sourceTree = "<group>"; };
+		E2FEF29930913763009B54CA /* ExcelWorkbook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExcelWorkbook.swift; sourceTree = "<group>"; };
+		E2FEF29B30913778009B54CA /* SpreadsheetResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpreadsheetResources.swift; sourceTree = "<group>"; };
+		E2FEF29D30913794009B54CA /* SpreadsheetStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpreadsheetStore.swift; sourceTree = "<group>"; };
+		E2FEF29F309137BE009B54CA /* CompanyDirectoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyDirectoryView.swift; sourceTree = "<group>"; };
+		E2FEF2A1309137BE009B54CA /* SpreadsheetPreviewSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpreadsheetPreviewSettings.swift; sourceTree = "<group>"; };
 		EB145AB0EC57EEDA8D7EB04A /* Program.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Program.swift; sourceTree = "<group>"; };
 		EC285F8826424164ACE39DFD /* EmptyStateCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateCard.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -85,6 +149,14 @@
 				66AE45529F92E06569D1B213 /* CatalogStore.swift */,
 				958B717D7F5845E2898624EE /* SeenStore.swift */,
 				6E4D4E01E91B464FA8B879DD /* SettingsStore.swift */,
+				E27FA68D308D77B6000F6AA2 /* RecentStore.swift */,
+				E27FA68F308D77B6000F6AA2 /* WebGuideCatalog.swift */,
+				E2FEF29B30913778009B54CA /* SpreadsheetResources.swift */,
+				E2FEF29D30913794009B54CA /* SpreadsheetStore.swift */,
+				E2CD14693091736B00ACEBB8 /* RecentlyUpdatedResource.swift */,
+				E2CD146B3091737C00ACEBB8 /* AppLanguage.swift */,
+				E2CD146F30918A3F00ACEBB8 /* HardHatGame.swift */,
+				E2CD147130918A3F00ACEBB8 /* HardHatScores.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -98,6 +170,11 @@
 				2287311A09B4EAB4EDE52280 /* DropboxService.swift */,
 				AC8A93792840E74654BE466E /* MediaCache.swift */,
 				81FA4D36E7E34DBABB3FF701 /* NetworkMonitor.swift */,
+				E27FA695308D7A76000F6AA2 /* LogoImageCache.swift */,
+				E27FA697308D7A92000F6AA2 /* DownloadRetryPolicy.swift */,
+				E27FA69B308D8580000F6AA2 /* FormExportFile.swift */,
+				E2FEF29930913763009B54CA /* ExcelWorkbook.swift */,
+				E2C50D7730913FD600113F1B /* StagingCredentials.local.swift */,
 			);
 			path = Sync;
 			sourceTree = "<group>";
@@ -130,6 +207,23 @@
 				EC285F8826424164ACE39DFD /* EmptyStateCard.swift */,
 				D5A489F3B3F84CD895BAC007 /* SettingsView.swift */,
 				3A96BC497A9ADEBB7070F5AA /* SplashView.swift */,
+				E27FA687308D7495000F6AA2 /* DeviceGettingStartedView.swift */,
+				E27FA689308D7495000F6AA2 /* TrainingIntroduction.swift */,
+				E27FA68B308D758A000F6AA2 /* MicrosoftGettingStartedView.swift */,
+				E27FA691308D77CF000F6AA2 /* WebGuideRow.swift */,
+				E27FA693308D77CF000F6AA2 /* LibraryDiscoverySections.swift */,
+				E27FA699308D7AB4000F6AA2 /* DownloadRecoveryNotice.swift */,
+				E2FEF29F309137BE009B54CA /* CompanyDirectoryView.swift */,
+				E2FEF2A1309137BE009B54CA /* SpreadsheetPreviewSettings.swift */,
+				E2C50D793091479E00113F1B /* FillableFormView.swift */,
+				E2C50D7B3091489A00113F1B /* SigningPDFView.swift */,
+				E2A5A1E1309152A10014CC28 /* AppLockView.swift */,
+				E2CD14633091689D00ACEBB8 /* ResourceTile.swift */,
+				E2CD146D3091870A00ACEBB8 /* AppStyle.swift */,
+				E2CD147330918A9600ACEBB8 /* HardHatGameView.swift */,
+				E2CD1475309191AC00ACEBB8 /* ScanAndSendView.swift */,
+				E224685F309286DC00BD5C10 /* BookmarkAction.swift */,
+				E2246861309288A000BD5C10 /* AppGuideView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -145,6 +239,8 @@
 		FAF41E46E10F263997218E2C /* MagnumFieldTraining */ = {
 			isa = PBXGroup;
 			children = (
+				E2CD14653091733900ACEBB8 /* Localizable.xcstrings */,
+				E2CD14663091733900ACEBB8 /* MagnumFieldTraining-InfoPlist.xcstrings */,
 				BE60A5B876E7413ACC17889A /* MagnumFieldTrainingApp.swift */,
 				93D518CD667C9EA2681BBEC1 /* ContentView.swift */,
 				0E8E8D21A9ACBF4C39BCC484 /* Models */,
@@ -185,7 +281,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1520;
-				LastUpgradeCheck = 2700;
+				LastUpgradeCheck = 2710;
 				TargetAttributes = {
 					4C2B07073750C788860C4667 = {
 						CreatedOnToolsVersion = 15.2;
@@ -199,6 +295,7 @@
 			knownRegions = (
 				en,
 				Base,
+				es,
 			);
 			mainGroup = 4C8E30E4BB3EF1B3BF9E8042;
 			productRefGroup = A66A5F1666710C9AFAE58AC1 /* Products */;
@@ -215,6 +312,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E2CD14673091733900ACEBB8 /* MagnumFieldTraining-InfoPlist.xcstrings in Resources */,
+				E2CD14683091733900ACEBB8 /* Localizable.xcstrings in Resources */,
 				546F6216EDCB2F873BAA8556 /* Assets.xcassets in Resources */,
 				F9A202324F12BFDEE038D0CC /* PDFs in Resources */,
 			);
@@ -228,29 +327,59 @@
 			buildActionMask = 2147483647;
 			files = (
 				E7416CF34E1830D1B3E269F4 /* MagnumFieldTrainingApp.swift in Sources */,
+				E2A5A1E2309152A10014CC28 /* AppLockView.swift in Sources */,
 				02D60C07520B5EE7564A4690 /* ContentView.swift in Sources */,
 				2005FEB4A41C5E19DA56A7E3 /* Program.swift in Sources */,
+				E27FA68C308D758A000F6AA2 /* MicrosoftGettingStartedView.swift in Sources */,
+				E2FEF2A2309137BE009B54CA /* SpreadsheetPreviewSettings.swift in Sources */,
+				E2C50D7A3091479E00113F1B /* FillableFormView.swift in Sources */,
+				E2FEF29C30913778009B54CA /* SpreadsheetResources.swift in Sources */,
 				4BAAC0EC988EB56E362E2B50 /* ProgramData.swift in Sources */,
 				3DD9C18345254CEF9C1A67B3 /* PinnedStore.swift in Sources */,
 				046AC871B45B45CD9054435C /* WalkthroughFolder.swift in Sources */,
+				E2CD147030918A3F00ACEBB8 /* HardHatGame.swift in Sources */,
+				E27FA69C308D8580000F6AA2 /* FormExportFile.swift in Sources */,
+				E27FA688308D7495000F6AA2 /* DeviceGettingStartedView.swift in Sources */,
+				E27FA692308D77CF000F6AA2 /* WebGuideRow.swift in Sources */,
+				E2FEF2A0309137BE009B54CA /* CompanyDirectoryView.swift in Sources */,
 				0AE1A60759D3E382DA7F4706 /* CatalogStore.swift in Sources */,
+				E2246862309288A000BD5C10 /* AppGuideView.swift in Sources */,
 				06CA1E8CB428CD310D37721C /* ProgramDetailView.swift in Sources */,
+				E27FA68E308D77B6000F6AA2 /* RecentStore.swift in Sources */,
 				60CE6C50D1448E35713C8EEB /* PDFKitRepresentedView.swift in Sources */,
 				F653414765A25CF0F919E9B7 /* WalkthroughDetailView.swift in Sources */,
 				D35CCD1FC98DD57F46AA763C /* WalkthroughRow.swift in Sources */,
+				E2CD146A3091736B00ACEBB8 /* RecentlyUpdatedResource.swift in Sources */,
 				4939669A8A2FA72E1AACB3B2 /* DropboxModels.swift in Sources */,
+				E2CD14643091689D00ACEBB8 /* ResourceTile.swift in Sources */,
+				E2FEF29A30913763009B54CA /* ExcelWorkbook.swift in Sources */,
 				A9C056B1FB5BBD69A343FF43 /* DropboxConfig.swift in Sources */,
+				E2CD147230918A3F00ACEBB8 /* HardHatScores.swift in Sources */,
 				0FE684DA68EDED3A896EA7F0 /* DropboxAuthService.swift in Sources */,
+				E2CD146E3091870A00ACEBB8 /* AppStyle.swift in Sources */,
 				A4758201E45714A7FE78E2F1 /* DropboxService.swift in Sources */,
 				44DBA0121E418CAF43C79DF1 /* MediaCache.swift in Sources */,
 				14B915D8338F45EC816EC3A7 /* SettingsStore.swift in Sources */,
+				E2CD1476309191AC00ACEBB8 /* ScanAndSendView.swift in Sources */,
 				E6249C9ED1A948A9B37DD07F /* SeenStore.swift in Sources */,
+				E27FA68A308D7495000F6AA2 /* TrainingIntroduction.swift in Sources */,
+				E2FEF29E30913794009B54CA /* SpreadsheetStore.swift in Sources */,
+				E27FA696308D7A76000F6AA2 /* LogoImageCache.swift in Sources */,
 				D60C5CB9D1BA4D4FBB09E703 /* NetworkMonitor.swift in Sources */,
+				E27FA698308D7A92000F6AA2 /* DownloadRetryPolicy.swift in Sources */,
+				E2C50D7C3091489A00113F1B /* SigningPDFView.swift in Sources */,
 				F7840E27277F49128F762101 /* SettingsView.swift in Sources */,
+				E27FA690308D77B6000F6AA2 /* WebGuideCatalog.swift in Sources */,
+				E27FA69A308D7AB4000F6AA2 /* DownloadRecoveryNotice.swift in Sources */,
+				E27FA694308D77CF000F6AA2 /* LibraryDiscoverySections.swift in Sources */,
 				0D01A256EC3549CCB2F90148 /* PDFThumbnailBar.swift in Sources */,
 				8E0DB0DFD61E43F489611A33 /* CardRowStyle.swift in Sources */,
 				9B7EE1255E5347ECAE70EC8E /* EmptyStateCard.swift in Sources */,
+				E2CD146C3091737C00ACEBB8 /* AppLanguage.swift in Sources */,
+				E2C50D7830913FD600113F1B /* StagingCredentials.local.swift in Sources */,
+				E2246860309286DC00BD5C10 /* BookmarkAction.swift in Sources */,
 				FAD045E5711C3006F3B1672A /* SplashView.swift in Sources */,
+				E2CD147430918A9600ACEBB8 /* HardHatGameView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,13 +391,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
-				DEVELOPMENT_TEAM = 4LAZG5FD6F;
+				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Training Depot";
+				INFOPLIST_KEY_CFBundleDisplayName = "Field Resources";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Scan paper documents to mark up and share them.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -280,9 +410,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.5;
-				PRODUCT_BUNDLE_IDENTIFIER = com.magnumfieldtraining.app;
+				MARKETING_VERSION = 2.2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.magnumdrywall.fieldapp.staging;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -315,6 +446,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 89775CDN3H;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -342,13 +474,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
-				DEVELOPMENT_TEAM = 4LAZG5FD6F;
+				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Training Depot";
+				INFOPLIST_KEY_CFBundleDisplayName = "Field Resources";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Scan paper documents to mark up and share them.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -360,9 +493,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.5;
-				PRODUCT_BUNDLE_IDENTIFIER = com.magnumfieldtraining.app;
+				MARKETING_VERSION = 2.2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.magnumdrywall.fieldapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -395,6 +529,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 89775CDN3H;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;

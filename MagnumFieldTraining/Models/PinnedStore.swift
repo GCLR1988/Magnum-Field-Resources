@@ -1,12 +1,9 @@
 import Foundation
 import Combine
 
-/// Persists which walkthroughs a foreman has manually pinned, keyed by each
-/// document's stable `persistenceKey`. Pinned items show in the "Pinned"
-/// section on the home screen -- this replaces automatic "Recently Viewed"
-/// tracking with something the foreman controls directly, tapping a pin
-/// icon next to any PDF or video. Backed by UserDefaults so pins survive
-/// relaunches without needing any network connection.
+/// Persists bookmarks across launches, using the original pin storage key so
+/// previously pinned documents and guides remain saved. Additional resource
+/// kinds use namespaced keys supplied by BookmarkKey.
 final class PinnedStore: ObservableObject {
     @Published private(set) var pinnedKeys: Set<String>
 

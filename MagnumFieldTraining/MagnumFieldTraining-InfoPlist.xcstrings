@@ -10,6 +10,12 @@
             "state" : "new",
             "value" : "Field Resources"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Recursos para la obra"
+          }
         }
       }
     },
@@ -21,6 +27,24 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "MagnumFieldTraining"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "MagnumFieldTraining"
+          }
+        }
+      }
+    },
+    "NSCameraUsageDescription" : {
+      "comment" : "Privacy - Camera Usage Description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Scan paper documents to mark up and share them."
           }
         }
       }

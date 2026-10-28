@@ -9,13 +9,20 @@ import Foundation
 /// folder -- that way, if these values are ever extracted from the app,
 /// the worst case is read access to just that one training folder.
 enum DropboxConfig {
-    static let appKey = "xsbnsf5crixbv9f"
-    static let appSecret = "zgbb00vik775fzb"
-    /// Long-lived refresh token obtained via the one-time authorization in
-    /// DROPBOX_SETUP.md. Doesn't expire on its own (unless revoked).
-    static let refreshToken = "A1JsR2zb5G8AAAAAAAAAAWE7t2k33hCuImeljvMc1gLtSiF2k-sWn89vqdsQ_4_-"
+    // The organized Dropbox source is now the permanent source for this version.
+    // The historical local filename/type is retained to avoid moving credentials.
+    // Both Debug and Release use it; previously distributed binaries retain their old source.
+    static let appKey = StagingCredentials.appKey
+    static let appSecret = StagingCredentials.appSecret
+    static let refreshToken = StagingCredentials.refreshToken
 
     static var isConfigured: Bool {
-        !appKey.hasPrefix("YOUR-") && !appSecret.hasPrefix("YOUR-") && !refreshToken.hasPrefix("YOUR-")
+        #if DEBUG
+        // A staging build must never reuse the live app's storage container.
+        guard Bundle.main.bundleIdentifier?.hasSuffix(".staging") == true else { return false }
+        #endif
+        return [appKey, appSecret, refreshToken].allSatisfy {
+            !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !$0.hasPrefix("YOUR-")
+        }
     }
 }
