@@ -46,6 +46,30 @@
             "state" : "new",
             "value" : "Scan paper documents to mark up and share them."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Escanea documentos en papel para agregar anotaciones y compartirlos."
+          }
+        }
+      }
+    },
+    "NSFaceIDUsageDescription" : {
+      "comment" : "Privacy - Face ID Usage Description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Use Face ID to securely unlock Magnum Field Resources."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "machine_translated",
+            "value" : "Usa Face ID para desbloquear Magnum · Recursos para la obra de forma segura."
+          }
         }
       }
     }

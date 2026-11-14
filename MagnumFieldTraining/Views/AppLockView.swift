@@ -1,6 +1,5 @@
 import SwiftUI
 import LocalAuthentication
-import Security
 import Observation
 
 struct AppLockView: View {
@@ -31,7 +30,7 @@ final class AppLockSession {
     @ObservationIgnored private var requestID = UUID()
     @ObservationIgnored private let evaluate: @MainActor (LAContext) async throws -> Bool
 
-    init(evaluate: @escaping @MainActor (LAContext) async throws -> Bool = AppLockSession.evaluateDevicePasscode) {
+    init(evaluate: @escaping @MainActor (LAContext) async throws -> Bool = AppLockSession.evaluateDeviceOwner) {
         self.evaluate = evaluate
     }
 
@@ -55,7 +54,11 @@ final class AppLockSession {
     func becameActive() {
         isSceneActive = true
         if shouldPrompt {
-            Task { await authenticate() }
+            Task {
+                // A manual attempt may finish before this queued task starts.
+                guard shouldPrompt else { return }
+                await authenticate()
+            }
         }
     }
 
@@ -93,20 +96,17 @@ final class AppLockSession {
         }
     }
 
-    private static func evaluateDevicePasscode(_ context: LAContext) async throws -> Bool {
+    private static func evaluateDeviceOwner(_ context: LAContext) async throws -> Bool {
         var policyError: NSError?
         guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &policyError) else {
             throw policyError ?? LAError(.authenticationFailed)
         }
-        var accessError: Unmanaged<CFError>?
-        guard let access = SecAccessControlCreateWithFlags(
-            nil, kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly, .devicePasscode, &accessError
-        ) else {
-            throw LAError(.invalidContext)
-        }
-        return try await context.evaluateAccessControl(
-            access, operation: .useItem,
-            localizedReason: AppLanguage.string("Enter your device passcode to unlock Magnum Field Resources.")
+        // iOS uses enrolled Face ID or Touch ID first, and provides device-passcode
+        // fallback when biometrics are unavailable, denied, or locked out.
+        context.localizedFallbackTitle = AppLanguage.string("Use Passcode")
+        return try await context.evaluatePolicy(
+            .deviceOwnerAuthentication,
+            localizedReason: AppLanguage.string("Unlock Magnum Field Resources.")
         )
     }
 }
@@ -121,7 +121,7 @@ private struct AppLockScreen: View {
                 .foregroundStyle(Color.accentColor)
             Text("Magnum Field Resources").font(.title2.bold())
             if !lock.isUnlocked {
-                Text(lock.message ?? AppLanguage.string("Enter your device passcode to open the app."))
+                Text(lock.message ?? AppLanguage.string("Use Face ID, Touch ID, or your device passcode to open the app."))
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                 Button("Unlock") { Task { await lock.authenticate() } }

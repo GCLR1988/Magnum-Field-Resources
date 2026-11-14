@@ -93,7 +93,112 @@ something's off, the program's screen will show a red banner with the
 error Dropbox returned -- most commonly a wrong folder path, or
 permissions not saved in step 2.
 
-## Notes / limits
+## Announcement banner
+
+### Full-featured announcements (recommended)
+
+Use `Announcement.json` to control expiration, a link, and English/Spanish
+content. The blue banner remains below the main home-screen banner.
+
+1. Install the updated app build.
+2. Open the connected Dropbox app folder that contains your program folders.
+3. Create a UTF-8 plain-text file named exactly `Announcement.json`, using
+   the template below. In TextEdit, use **Format > Make Plain Text** first.
+   Alternatively, ask an LLM to generate a downloadable JSON file from this template.
+4. Replace the ID, text, and expiration date. Use `null` for no expiration
+   or no link. Keep quotes and commas as shown; do not include Markdown fences.
+5. Upload the file alongside the program folders. Remove the old
+   `Announcement.txt` to avoid it returning if the JSON file is later deleted.
+6. Wait for Dropbox to upload, then open Home and pull down to refresh.
+7. Switch the app to Spanish to verify the Spanish content. Tap the X to
+   dismiss it; relaunching should keep it hidden. To publish another notice,
+   change `id` to a new unique value and refresh.
+
+```json
+{
+  "id": "safety-training-2026-11-20",
+  "enabled": true,
+  "expiresAt": "2026-11-20T17:00:00-08:00",
+  "link": null,
+  "en": {
+    "title": "Safety Reminder",
+    "message": "Please complete your fall protection training by Friday."
+  },
+  "es": {
+    "title": "Recordatorio de seguridad",
+    "message": "Completa la capacitación sobre protección contra caídas antes del viernes."
+  }
+}
+```
+
+- **Expiration:** The example expires November 20, 2026, at 5 p.m. Pacific
+  Standard Time. Use a full ISO 8601 timestamp with an explicit time-zone
+  offset. Pacific Standard Time uses `-08:00`; Pacific Daylight Time uses
+  `-07:00`. Expiration works from the downloaded copy while offline, using
+  the device clock. Set `expiresAt` to `null` for no expiration.
+- **Dismissal:** The X hides that ID on that device, including after relaunch.
+  Keep the ID for typo corrections; change it for a new announcement that
+  everyone should see. Switching languages does not reset dismissal.
+- **Links:** Replace `null` with a quoted URL such as
+  `"https://example.com/training.pdf"`. The “Learn more” control opens an
+  HTTP/HTTPS webpage or document link in the system handler. For Dropbox
+  documents, use a shared link that your audience can access, not a local
+  file path. Linked content may need internet access or a separate sign-in.
+- **Languages:** `en` is required; `es` is optional. The app selects Spanish
+  when its language toggle is Spanish, falling back to English if `es` is
+  missing or its title is blank. Supply the translations yourself; the app
+  does not automatically translate the announcement.
+- **Hide for everyone:** Set `enabled` to `false` and refresh. Alternatively,
+  delete both announcement files. Devices must sync to receive this change.
+  A downloaded expiration date still takes effect without syncing.
+- **Format:** Keep the file below 64 KB. Use `\n` inside a message for line
+  breaks. Invalid JSON, invalid dates, or unsupported links preserve the
+  previous valid announcement until a corrected file syncs.
+- **Priority:** If both formats exist, JSON wins, even when disabled or
+  expired. An invalid JSON file does not fall back to the text file.
+
+### Simple text announcements (still supported)
+
+The home screen reads `Announcement.txt` from the root of the connected
+Dropbox app folder when no `Announcement.json` exists. This is an in-app
+banner; it does not send push notifications.
+
+1. Install the app build that includes the announcement banner.
+2. Open the Dropbox folder that already contains your app's program folders
+   (for example, `Apps/Training Depot`). Use the folder for the build you are
+   running if your live and staging builds connect to different Dropbox apps.
+3. Upload the sample `Announcement.txt` from this project's root directly into
+   that folder, alongside the program folders, not inside one of them.
+4. To change the announcement on your Mac, open the file in TextEdit. Choose
+   **Format > Make Plain Text** if the document is in rich-text mode. Save as
+   `Announcement.txt` with UTF-8 encoding. Keep the file under 64 KB.
+5. Put the title on the first line and the message on the following lines:
+
+   ```text
+   Safety Reminder
+   Please complete your fall protection training by Friday.
+   ```
+
+6. Save it to your synced Dropbox folder, or upload it to Dropbox and replace
+   the existing `Announcement.txt`. Wait for the upload to finish.
+7. Open the app's Home screen and pull down to refresh. The banner appears
+   below the introduction. The app also checks when it becomes active.
+8. To remove the banner, empty the file or delete it from Dropbox, then refresh.
+
+The last successfully downloaded announcement remains available offline.
+Deletion or clearing takes effect on each device after its next successful
+sync. Network errors or invalid text leave the previous announcement intact.
+Text appears exactly as written, regardless of the app's selected language;
+use the JSON format above for separate language versions. Text announcements
+can also be dismissed; editing their text makes them appear again.
+No new Dropbox permissions,
+shared links, or developer-console changes are needed for an already connected app.
+
+If the banner does not appear, check that the file is named `Announcement.txt`
+(not `.rtf` or `.txt.txt`), is in the correct app folder, and has finished
+uploading. Confirm that the app can refresh its other Dropbox content.
+
+## Connection notes / limits
 
 - **The refresh token doesn't expire on its own** (unlike a SharePoint
   client secret), so there's no forced rotation schedule -- it only stops

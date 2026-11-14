@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// One coordinated color family per resource category, shared by tiles and sidebar icons.
+/// Shared brand iconography for resource tiles and sidebar rows.
 struct ResourceIconTheme {
     let symbol: String
     let base: Color
@@ -8,59 +8,40 @@ struct ResourceIconTheme {
 
     static func forName(_ name: String) -> ResourceIconTheme {
         let title = name.lowercased()
-        if title.contains("directory") || title.contains("contact") || title.contains("employee") || title.contains("team") {
-            return theme("person.crop.rectangle.fill", 0x125C73, 0x268F9C)
+        if title == "my forms & templates" {
+            return theme("doc.on.doc", 0x256343, 0x4C9B6B)
         }
-        if title.contains("form") {
-            return theme("doc.text.fill", 0x59379A, 0x9371D2)
+        if title.contains("weekly") && title.contains("safety") {
+            return theme("checkmark.shield", 0x78232F, 0xAA4655)
         }
         if title.contains("safety") || title.contains("inspection") {
-            return theme("checkmark.shield.fill", 0xA44D19, 0xE38A36)
+            return theme("checklist", 0x79562E, 0xAB854A)
+        }
+        if title.contains("payroll") || title.contains("time") {
+            return theme("calendar.badge.clock", 0x2D4E6B, 0x52789A)
+        }
+        if title.contains("directory") || title.contains("contact") || title.contains("team") {
+            return theme("person.2", 0x65506F, 0x92749F)
         }
         if title.contains("link") {
-            return theme("link", 0x086A62, 0x2B9B85)
+            return theme("link", 0x1D6266, 0x438B90)
         }
-        if title.contains("training") || title.contains("guide") || title.contains("start") || title.contains("basic") {
-            return theme("books.vertical.fill", 0x23499A, 0x5889D6)
+        if title.contains("scan") {
+            return theme("viewfinder", 0x8B4336, 0xB96B55)
         }
-        if title.contains("iphone") || title.contains("ipad") || title.contains("device") {
-            return theme(title.contains("ipad") ? "ipad" : "iphone", 0x3B526D, 0x7097B2)
+        if title.contains("training") || title.contains("guide") || title.contains("device") {
+            return theme("books.vertical", 0x3E424C, 0x6C7180)
         }
-        if title.contains("time") || title.contains("payroll") {
-            return theme("clock.badge.checkmark.fill", 0x975520, 0xCE9754)
+        if title.contains("iphone") || title.contains("ipad") {
+            return theme(title.contains("ipad") ? "ipad" : "iphone", 0x3E424C, 0x6C7180)
         }
-        if title.contains("schedule") || title.contains("calendar") {
-            return theme("calendar", 0xA23852, 0xDA7289)
-        }
-        if title.contains("plan") || title.contains("drawing") || title.contains("blueprint") {
-            return theme("ruler.fill", 0x205F9A, 0x47A2C4)
-        }
-        if title.contains("tool") || title.contains("equipment") {
-            return theme("wrench.and.screwdriver.fill", 0x92512A, 0xCF8B55)
-        }
-        if title.contains("photo") || title.contains("image") {
-            return theme("photo.on.rectangle.angled", 0x76509C, 0xAF88CA)
+        if title.contains("form") {
+            return theme("doc.text", 0x78232F, 0xAA4655)
         }
         if title.contains("video") {
-            return theme("play.rectangle.fill", 0x9B3F72, 0xD77DA4)
+            return theme("play.rectangle", 0x65506F, 0x92749F)
         }
-        if title.contains("report") || title.contains("daily") {
-            return theme("chart.bar.doc.horizontal.fill", 0x126B7F, 0x4CA0B1)
-        }
-        if title.contains("estimate") || title.contains("budget") || title.contains("cost") {
-            return theme("chart.pie.fill", 0x2F7251, 0x70AD7C)
-        }
-        if title.contains("request") || title.contains("rfi") {
-            return theme("bubble.left.and.bubble.right.fill", 0x4267A0, 0x8BADD5)
-        }
-        if title.contains("checklist") || title.contains("policy") || title.contains("policies") {
-            return theme("checklist", 0x357151, 0x79A989)
-        }
-        if title.contains("newsletter") || title.contains("news") {
-            return theme("newspaper.fill", 0x6F4586, 0xAF80BC)
-        }
-        // Unclassified folders use the Magnum burgundy family.
-        return theme("folder.fill", 0x70263B, 0xB5677B)
+        return theme("folder", 0x78232F, 0xAA4655)
     }
 
     private static func theme(_ symbol: String, _ base: UInt32, _ highlight: UInt32) -> ResourceIconTheme {
@@ -74,8 +55,9 @@ struct ResourceIconTheme {
     }
 }
 
-/// Layered vector artwork stays crisp at both tile and sidebar sizes.
+/// Simple vector symbols on quiet tinted surfaces stay crisp at every size.
 struct ResourceFolderIcon: View {
+    @Environment(\.colorScheme) private var colorScheme
     let name: String
     var compact = false
     var isSubfolder = false
@@ -83,35 +65,18 @@ struct ResourceFolderIcon: View {
     var body: some View {
         let theme = ResourceIconTheme.forName(name)
         let side: CGFloat = compact ? 32 : 56
-        let shape = RoundedRectangle(cornerRadius: compact ? 9 : 16, style: .continuous)
+        let shape = RoundedRectangle(cornerRadius: compact ? 6 : 10, style: .continuous)
         ZStack {
-            shape.fill(LinearGradient(colors: [theme.highlight, theme.base],
-                                      startPoint: .topLeading, endPoint: .bottomTrailing))
-            Circle()
-                .fill(.white.opacity(0.12))
-                .frame(width: side * 0.95, height: side * 0.95)
-                .offset(x: -side * 0.3, y: -side * 0.35)
-            Circle()
-                .strokeBorder(.white.opacity(0.10), lineWidth: compact ? 3 : 5)
-                .frame(width: side * 0.85, height: side * 0.85)
-                .offset(x: side * 0.4, y: side * 0.4)
+            shape.fill(theme.base.opacity(0.10))
             Image(systemName: theme.symbol)
                 .symbolRenderingMode(.hierarchical)
-                .font(.system(size: compact ? 16 : 27, weight: .medium))
-                .foregroundStyle(.white)
-                .shadow(color: theme.base.opacity(0.35), radius: 1, x: 0, y: 1)
+                .font(.system(size: compact ? 17 : 26, weight: .medium))
+                .foregroundStyle(colorScheme == .dark ? theme.highlight : theme.base)
         }
         .frame(width: side, height: side)
-        .clipShape(shape)
         .overlay {
-            shape.strokeBorder(
-                LinearGradient(colors: [.white.opacity(0.45), .white.opacity(0.05)],
-                               startPoint: .topLeading, endPoint: .bottomTrailing),
-                lineWidth: 0.75
-            )
+            shape.strokeBorder(theme.base.opacity(0.12), lineWidth: 1)
         }
-        .shadow(color: theme.base.opacity(compact ? 0.12 : 0.22),
-                radius: compact ? 2 : 4, x: 0, y: compact ? 1 : 3)
         .accessibilityHidden(true)
     }
 }

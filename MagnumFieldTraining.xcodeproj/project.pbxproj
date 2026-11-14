@@ -29,6 +29,16 @@
 		D60C5CB9D1BA4D4FBB09E703 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FA4D36E7E34DBABB3FF701 /* NetworkMonitor.swift */; };
 		E2246860309286DC00BD5C10 /* BookmarkAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E224685F309286DC00BD5C10 /* BookmarkAction.swift */; };
 		E2246862309288A000BD5C10 /* AppGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2246861309288A000BD5C10 /* AppGuideView.swift */; };
+		E22F04B230A770B500FC1127 /* SavedFormStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22F04B130A770B500FC1127 /* SavedFormStore.swift */; };
+		E22F04B430A770B600FC1127 /* SavedFormsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22F04B330A770B600FC1127 /* SavedFormsView.swift */; };
+		E22F04B630A7712700FC1127 /* PDFContentSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22F04B530A7712700FC1127 /* PDFContentSearch.swift */; };
+		E22F04B830A7715100FC1127 /* PDFContentResultsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22F04B730A7715100FC1127 /* PDFContentResultsSection.swift */; };
+		E22F04BA30A7899100FC1127 /* LandingFolderTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22F04B930A7899100FC1127 /* LandingFolderTile.swift */; };
+		E22F04BC30A78D2C00FC1127 /* FormFieldSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22F04BB30A78D2C00FC1127 /* FormFieldSupport.swift */; };
+		E22F04BE30A78DDB00FC1127 /* FormAssistantView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22F04BD30A78DDB00FC1127 /* FormAssistantView.swift */; };
+		E22F04C030A78DFD00FC1127 /* SavedFormRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22F04BF30A78DFD00FC1127 /* SavedFormRow.swift */; };
+		E23D299D30A803630063627D /* Announcement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23D299C30A803630063627D /* Announcement.swift */; };
+		E23D299F30A803630063627D /* AnnouncementBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = E23D299E30A803630063627D /* AnnouncementBanner.swift */; };
 		E27FA688308D7495000F6AA2 /* DeviceGettingStartedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27FA687308D7495000F6AA2 /* DeviceGettingStartedView.swift */; };
 		E27FA68A308D7495000F6AA2 /* TrainingIntroduction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27FA689308D7495000F6AA2 /* TrainingIntroduction.swift */; };
 		E27FA68C308D758A000F6AA2 /* MicrosoftGettingStartedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27FA68B308D758A000F6AA2 /* MicrosoftGettingStartedView.swift */; };
@@ -40,6 +50,7 @@
 		E27FA698308D7A92000F6AA2 /* DownloadRetryPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27FA697308D7A92000F6AA2 /* DownloadRetryPolicy.swift */; };
 		E27FA69A308D7AB4000F6AA2 /* DownloadRecoveryNotice.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27FA699308D7AB4000F6AA2 /* DownloadRecoveryNotice.swift */; };
 		E27FA69C308D8580000F6AA2 /* FormExportFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27FA69B308D8580000F6AA2 /* FormExportFile.swift */; };
+		E2A0EB5E30A812BB008B32BD /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = E2A0EB5D30A812BB008B32BD /* PrivacyInfo.xcprivacy */; };
 		E2A5A1E2309152A10014CC28 /* AppLockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A5A1E1309152A10014CC28 /* AppLockView.swift */; };
 		E2C50D7830913FD600113F1B /* StagingCredentials.local.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C50D7730913FD600113F1B /* StagingCredentials.local.swift */; };
 		E2C50D7A3091479E00113F1B /* FillableFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C50D793091479E00113F1B /* FillableFormView.swift */; };
@@ -95,6 +106,16 @@
 		DD16C354868A8ED1FC7B9771 /* PDFKitRepresentedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFKitRepresentedView.swift; sourceTree = "<group>"; };
 		E224685F309286DC00BD5C10 /* BookmarkAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarkAction.swift; sourceTree = "<group>"; };
 		E2246861309288A000BD5C10 /* AppGuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppGuideView.swift; sourceTree = "<group>"; };
+		E22F04B130A770B500FC1127 /* SavedFormStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedFormStore.swift; sourceTree = "<group>"; };
+		E22F04B330A770B600FC1127 /* SavedFormsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedFormsView.swift; sourceTree = "<group>"; };
+		E22F04B530A7712700FC1127 /* PDFContentSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFContentSearch.swift; sourceTree = "<group>"; };
+		E22F04B730A7715100FC1127 /* PDFContentResultsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFContentResultsSection.swift; sourceTree = "<group>"; };
+		E22F04B930A7899100FC1127 /* LandingFolderTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandingFolderTile.swift; sourceTree = "<group>"; };
+		E22F04BB30A78D2C00FC1127 /* FormFieldSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormFieldSupport.swift; sourceTree = "<group>"; };
+		E22F04BD30A78DDB00FC1127 /* FormAssistantView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormAssistantView.swift; sourceTree = "<group>"; };
+		E22F04BF30A78DFD00FC1127 /* SavedFormRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedFormRow.swift; sourceTree = "<group>"; };
+		E23D299C30A803630063627D /* Announcement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Announcement.swift; sourceTree = "<group>"; };
+		E23D299E30A803630063627D /* AnnouncementBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnouncementBanner.swift; sourceTree = "<group>"; };
 		E27FA687308D7495000F6AA2 /* DeviceGettingStartedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceGettingStartedView.swift; sourceTree = "<group>"; };
 		E27FA689308D7495000F6AA2 /* TrainingIntroduction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingIntroduction.swift; sourceTree = "<group>"; };
 		E27FA68B308D758A000F6AA2 /* MicrosoftGettingStartedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicrosoftGettingStartedView.swift; sourceTree = "<group>"; };
@@ -106,6 +127,7 @@
 		E27FA697308D7A92000F6AA2 /* DownloadRetryPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadRetryPolicy.swift; sourceTree = "<group>"; };
 		E27FA699308D7AB4000F6AA2 /* DownloadRecoveryNotice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadRecoveryNotice.swift; sourceTree = "<group>"; };
 		E27FA69B308D8580000F6AA2 /* FormExportFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormExportFile.swift; sourceTree = "<group>"; };
+		E2A0EB5D30A812BB008B32BD /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		E2A5A1E1309152A10014CC28 /* AppLockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockView.swift; sourceTree = "<group>"; };
 		E2C50D7730913FD600113F1B /* StagingCredentials.local.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StagingCredentials.local.swift; sourceTree = "<group>"; };
 		E2C50D793091479E00113F1B /* FillableFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FillableFormView.swift; sourceTree = "<group>"; };
@@ -157,6 +179,10 @@
 				E2CD146B3091737C00ACEBB8 /* AppLanguage.swift */,
 				E2CD146F30918A3F00ACEBB8 /* HardHatGame.swift */,
 				E2CD147130918A3F00ACEBB8 /* HardHatScores.swift */,
+				E22F04B130A770B500FC1127 /* SavedFormStore.swift */,
+				E22F04B530A7712700FC1127 /* PDFContentSearch.swift */,
+				E22F04BB30A78D2C00FC1127 /* FormFieldSupport.swift */,
+				E23D299C30A803630063627D /* Announcement.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -224,6 +250,12 @@
 				E2CD1475309191AC00ACEBB8 /* ScanAndSendView.swift */,
 				E224685F309286DC00BD5C10 /* BookmarkAction.swift */,
 				E2246861309288A000BD5C10 /* AppGuideView.swift */,
+				E22F04B330A770B600FC1127 /* SavedFormsView.swift */,
+				E22F04B730A7715100FC1127 /* PDFContentResultsSection.swift */,
+				E22F04B930A7899100FC1127 /* LandingFolderTile.swift */,
+				E22F04BD30A78DDB00FC1127 /* FormAssistantView.swift */,
+				E22F04BF30A78DFD00FC1127 /* SavedFormRow.swift */,
+				E23D299E30A803630063627D /* AnnouncementBanner.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -249,6 +281,7 @@
 				4AD7F867CA8F63A6DC5DA17F /* Sync */,
 				7D1B8A95FE5AA189ECF66E40 /* Assets.xcassets */,
 				D66D75169D64BEB98AC6BD75 /* PDFs */,
+				E2A0EB5D30A812BB008B32BD /* PrivacyInfo.xcprivacy */,
 			);
 			path = MagnumFieldTraining;
 			sourceTree = "<group>";
@@ -281,7 +314,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1520;
-				LastUpgradeCheck = 2710;
+				LastUpgradeCheck = 2720;
 				TargetAttributes = {
 					4C2B07073750C788860C4667 = {
 						CreatedOnToolsVersion = 15.2;
@@ -315,6 +348,7 @@
 				E2CD14673091733900ACEBB8 /* MagnumFieldTraining-InfoPlist.xcstrings in Resources */,
 				E2CD14683091733900ACEBB8 /* Localizable.xcstrings in Resources */,
 				546F6216EDCB2F873BAA8556 /* Assets.xcassets in Resources */,
+				E2A0EB5E30A812BB008B32BD /* PrivacyInfo.xcprivacy in Resources */,
 				F9A202324F12BFDEE038D0CC /* PDFs in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -330,6 +364,7 @@
 				E2A5A1E2309152A10014CC28 /* AppLockView.swift in Sources */,
 				02D60C07520B5EE7564A4690 /* ContentView.swift in Sources */,
 				2005FEB4A41C5E19DA56A7E3 /* Program.swift in Sources */,
+				E22F04B430A770B600FC1127 /* SavedFormsView.swift in Sources */,
 				E27FA68C308D758A000F6AA2 /* MicrosoftGettingStartedView.swift in Sources */,
 				E2FEF2A2309137BE009B54CA /* SpreadsheetPreviewSettings.swift in Sources */,
 				E2C50D7A3091479E00113F1B /* FillableFormView.swift in Sources */,
@@ -341,11 +376,13 @@
 				E27FA69C308D8580000F6AA2 /* FormExportFile.swift in Sources */,
 				E27FA688308D7495000F6AA2 /* DeviceGettingStartedView.swift in Sources */,
 				E27FA692308D77CF000F6AA2 /* WebGuideRow.swift in Sources */,
+				E22F04B630A7712700FC1127 /* PDFContentSearch.swift in Sources */,
 				E2FEF2A0309137BE009B54CA /* CompanyDirectoryView.swift in Sources */,
 				0AE1A60759D3E382DA7F4706 /* CatalogStore.swift in Sources */,
 				E2246862309288A000BD5C10 /* AppGuideView.swift in Sources */,
 				06CA1E8CB428CD310D37721C /* ProgramDetailView.swift in Sources */,
 				E27FA68E308D77B6000F6AA2 /* RecentStore.swift in Sources */,
+				E22F04C030A78DFD00FC1127 /* SavedFormRow.swift in Sources */,
 				60CE6C50D1448E35713C8EEB /* PDFKitRepresentedView.swift in Sources */,
 				F653414765A25CF0F919E9B7 /* WalkthroughDetailView.swift in Sources */,
 				D35CCD1FC98DD57F46AA763C /* WalkthroughRow.swift in Sources */,
@@ -362,23 +399,30 @@
 				14B915D8338F45EC816EC3A7 /* SettingsStore.swift in Sources */,
 				E2CD1476309191AC00ACEBB8 /* ScanAndSendView.swift in Sources */,
 				E6249C9ED1A948A9B37DD07F /* SeenStore.swift in Sources */,
+				E23D299D30A803630063627D /* Announcement.swift in Sources */,
 				E27FA68A308D7495000F6AA2 /* TrainingIntroduction.swift in Sources */,
 				E2FEF29E30913794009B54CA /* SpreadsheetStore.swift in Sources */,
+				E22F04BA30A7899100FC1127 /* LandingFolderTile.swift in Sources */,
 				E27FA696308D7A76000F6AA2 /* LogoImageCache.swift in Sources */,
+				E22F04BC30A78D2C00FC1127 /* FormFieldSupport.swift in Sources */,
 				D60C5CB9D1BA4D4FBB09E703 /* NetworkMonitor.swift in Sources */,
 				E27FA698308D7A92000F6AA2 /* DownloadRetryPolicy.swift in Sources */,
 				E2C50D7C3091489A00113F1B /* SigningPDFView.swift in Sources */,
 				F7840E27277F49128F762101 /* SettingsView.swift in Sources */,
+				E22F04B830A7715100FC1127 /* PDFContentResultsSection.swift in Sources */,
 				E27FA690308D77B6000F6AA2 /* WebGuideCatalog.swift in Sources */,
 				E27FA69A308D7AB4000F6AA2 /* DownloadRecoveryNotice.swift in Sources */,
+				E23D299F30A803630063627D /* AnnouncementBanner.swift in Sources */,
 				E27FA694308D77CF000F6AA2 /* LibraryDiscoverySections.swift in Sources */,
 				0D01A256EC3549CCB2F90148 /* PDFThumbnailBar.swift in Sources */,
 				8E0DB0DFD61E43F489611A33 /* CardRowStyle.swift in Sources */,
+				E22F04BE30A78DDB00FC1127 /* FormAssistantView.swift in Sources */,
 				9B7EE1255E5347ECAE70EC8E /* EmptyStateCard.swift in Sources */,
 				E2CD146C3091737C00ACEBB8 /* AppLanguage.swift in Sources */,
 				E2C50D7830913FD600113F1B /* StagingCredentials.local.swift in Sources */,
 				E2246860309286DC00BD5C10 /* BookmarkAction.swift in Sources */,
 				FAD045E5711C3006F3B1672A /* SplashView.swift in Sources */,
+				E22F04B230A770B500FC1127 /* SavedFormStore.swift in Sources */,
 				E2CD147430918A9600ACEBB8 /* HardHatGameView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -399,6 +443,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "Field Resources";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Scan paper documents to mark up and share them.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Use Face ID to securely unlock Magnum Field Resources.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -410,7 +455,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.2;
+				MARKETING_VERSION = 2.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.magnumdrywall.fieldapp.staging;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -424,6 +469,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -482,6 +528,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "Field Resources";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Scan paper documents to mark up and share them.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Use Face ID to securely unlock Magnum Field Resources.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -493,7 +540,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.2;
+				MARKETING_VERSION = 2.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.magnumdrywall.fieldapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -507,6 +554,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;

@@ -6,7 +6,7 @@ enum MediaCacheError: LocalizedError {
     case wifiRequired
 
     var errorDescription: String? {
-        "This video isn't downloaded yet, and Wi-Fi-only downloads are turned on. Connect to Wi-Fi, or allow cellular downloads in Settings."
+        AppLanguage.string("This video isn't downloaded yet, and Wi-Fi-only downloads are turned on. Connect to Wi-Fi, or allow cellular downloads in Settings.")
     }
 }
 

@@ -8,6 +8,8 @@ enum FormDrawingTool {
 
 /// Stores reversible edits separately from the template's annotations.
 final class SigningPDFView: PDFView {
+    var onDocumentChange: (() -> Void)?
+    private static let inkOwner = "MagnumFieldTraining.UserInk"
     var onHistoryChange: ((Int, Int) -> Void)?
     var drawingTool: FormDrawingTool = .pen {
         didSet { if oldValue != drawingTool { finishStroke() } }
@@ -54,8 +56,35 @@ final class SigningPDFView: PDFView {
         inkSurface.backgroundColor = .clear
         inkSurface.isHidden = true
         inkSurface.isMultipleTouchEnabled = false
-        inkSurface.accessibilityLabel = "Signature drawing area"
+        inkSurface.accessibilityLabel = AppLanguage.string("Signature drawing area")
         addSubview(inkSurface)
+        NotificationCenter.default.addObserver(self, selector: #selector(fieldDidChange(_:)),
+                                               name: UITextField.textDidEndEditingNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(fieldDidChange(_:)),
+                                               name: UITextView.textDidEndEditingNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(annotationDidChange),
+                                               name: .PDFViewAnnotationHit, object: self)
+    }
+
+    @objc private func fieldDidChange(_ notification: Notification) {
+        guard let view = notification.object as? UIView, view.isDescendant(of: self) else { return }
+        onDocumentChange?()
+    }
+
+    @objc private func annotationDidChange() {
+        onDocumentChange?()
+    }
+
+    /// Restore only app-created ink to the eraser; original PDF artwork stays intact.
+    func restoreSavedInk() {
+        sessionInk.removeAll()
+        guard let document else { return }
+        for index in 0..<document.pageCount {
+            guard let page = document.page(at: index) else { continue }
+            for annotation in page.annotations where annotation.userName == Self.inkOwner {
+                sessionInk.append(InkRecord(page: page, annotation: annotation))
+            }
+        }
     }
 
     override func layoutSubviews() {
@@ -101,6 +130,7 @@ final class SigningPDFView: PDFView {
         let localPath = UIBezierPath(cgPath: path.cgPath)
         localPath.apply(CGAffineTransform(translationX: -bounds.minX, y: -bounds.minY))
         let annotation = PDFAnnotation(bounds: bounds, forType: .ink, withProperties: nil)
+        annotation.userName = Self.inkOwner
         annotation.color = .black
         let border = PDFBorder()
         border.lineWidth = 1.5
@@ -116,7 +146,7 @@ final class SigningPDFView: PDFView {
         guard let page = page(for: location, nearest: false) else { return }
         let point = convert(location, to: page)
         let tolerance = 10 / max(scaleFactor, 0.1)
-        // Only ink added during this session is erasable; form fields and printed content stay intact.
+        // Only app-created ink is erasable; form fields and printed content stay intact.
         for record in sessionInk.reversed() where record.annotation.page === page {
             let annotation = record.annotation
             guard annotation.bounds.insetBy(dx: -tolerance, dy: -tolerance).contains(point) else { continue }
@@ -188,11 +218,11 @@ final class SigningPDFView: PDFView {
 
     private func publishHistory() {
         onHistoryChange?(undoHistory.count, redoHistory.count)
+        onDocumentChange?()
     }
 
     func clearDrawingHistory() {
         cancelStroke()
-        for record in sessionInk { record.annotation.page?.removeAnnotation(record.annotation) }
         sessionInk.removeAll()
         undoHistory.removeAll()
         redoHistory.removeAll()

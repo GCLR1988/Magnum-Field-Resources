@@ -6,7 +6,9 @@ import PDFKit
 struct ScanAndSendView: View {
     @Environment(\.openURL) private var openURL
     @State private var showingCamera = false
-    @State private var requestingCamera = false
+    // Start scanning as soon as this destination opens; the page remains available
+    // for permission errors, cancellation, or starting another scan.
+    @State private var requestingCamera = true
     @State private var pendingScan: VNDocumentCameraScan?
     @State private var completedScan: VNDocumentCameraScan?
     @State private var editor: ScannedDocument?
@@ -138,7 +140,7 @@ struct ScanAndSendView: View {
 struct ScannedDocument: Identifiable {
     let id = UUID()
     let document: PDFDocument
-    let title = "Scan " + Date().formatted(.iso8601.year().month().day().dateSeparator(.dash))
+    let title = AppLanguage.string("Scan \(Date().formatted(.iso8601.year().month().day().dateSeparator(.dash)))")
 
     /// Process one page at a time and yield between pages to keep the interface responsive.
     @MainActor

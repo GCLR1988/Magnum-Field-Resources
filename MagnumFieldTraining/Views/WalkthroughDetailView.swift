@@ -44,6 +44,7 @@ struct WalkthroughDetailView: View {
     @EnvironmentObject private var seenStore: SeenStore
     @EnvironmentObject private var catalogStore: CatalogStore
     let resource: WalkthroughResource
+    var initialPageIndex: Int? = nil
 
     @State private var previewURL: URL?
     @State private var pdfDocument: PDFDocument?
@@ -75,7 +76,7 @@ struct WalkthroughDetailView: View {
     var body: some View {
         Group {
             if let pdfDocument {
-                PDFKitRepresentedView(document: pdfDocument, pdfView: pdfView)
+                PDFKitRepresentedView(document: pdfDocument, pdfView: pdfView, initialPageIndex: initialPageIndex)
                     .ignoresSafeArea(edges: .bottom)
             } else if let player {
                 VideoPlayer(player: player)

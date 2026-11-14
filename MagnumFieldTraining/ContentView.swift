@@ -9,6 +9,7 @@ enum ResourceDestination: Hashable {
     case program(String)
     case links
     case scan
+    case savedForms
 }
 
 struct ContentView: View {
@@ -29,7 +30,7 @@ struct ContentView: View {
     var body: some View {
         NavigationSplitView(preferredCompactColumn: $compactColumn) {
             ResourceSidebar(selection: $selection, programs: catalogStore.programs,
-                            hasDirectory: resources.hasDirectory, openForms: { presentedForms = $0 })
+                            hasDirectory: resources.hasDirectory)
                 .navigationSplitViewColumnWidth(min: 240, ideal: 280, max: 340)
         } detail: {
             NavigationStack {
@@ -76,7 +77,10 @@ struct ContentView: View {
                     }
             }
         }
-        .task { await catalogStore.syncAll() }
+        .task(id: scenePhase) {
+            guard scenePhase == .active else { return }
+            await catalogStore.syncAll()
+        }
         .task(id: shouldAutoDownload) {
             guard shouldAutoDownload else { return }
             await catalogStore.syncAll()
@@ -95,12 +99,11 @@ private struct ResourceSidebar: View {
     @Binding var selection: ResourceDestination?
     let programs: [Program]
     let hasDirectory: Bool
-    var openForms: ((Program) -> Void)? = nil
 
     private var visiblePrograms: [Program] {
         programs.filter { !$0.isCompanyNewsletter }.sorted {
-            let left = $0.isDownloadableForms ? 0 : ($0.name == "Training Resources" ? 1 : 2)
-            let right = $1.isDownloadableForms ? 0 : ($1.name == "Training Resources" ? 1 : 2)
+            let left = $0.resourceOrder
+            let right = $1.resourceOrder
             return left == right ? $0.name.localizedStandardCompare($1.name) == .orderedAscending : left < right
         }
     }
@@ -111,6 +114,13 @@ private struct ResourceSidebar: View {
                 Label("Home", systemImage: "square.grid.2x2")
             }
             Section("Resources") {
+                programRows(visiblePrograms.filter { $0.resourceOrder < 4 })
+                NavigationLink(value: ResourceDestination.savedForms) {
+                    HStack(spacing: 10) {
+                        ResourceFolderIcon(name: "My Forms & Templates", compact: true)
+                        Text("My Forms & Templates")
+                    }
+                }
                 if hasDirectory {
                     NavigationLink(value: ResourceDestination.directory) {
                         HStack(spacing: 10) {
@@ -120,30 +130,6 @@ private struct ResourceSidebar: View {
                     }
                     .bookmarkAction(BookmarkKey.directory)
                 }
-                ForEach(visiblePrograms) { program in
-                    if program.isDownloadableForms, let openForms {
-                        Button { openForms(program) } label: {
-                            HStack(spacing: 10) {
-                                FolderArtwork(name: program.name, logo: catalogStore.logo(for: program), compact: true)
-                                Text(program.displayName(locale: locale)).foregroundStyle(.primary)
-                            }
-                        }
-                        .buttonStyle(ResourcePressStyle())
-                        .bookmarkAction(BookmarkKey.program(program.id))
-                    } else {
-                        NavigationLink(value: ResourceDestination.program(program.id)) {
-                            HStack(spacing: 10) {
-                                FolderArtwork(name: program.name, logo: catalogStore.logo(for: program), compact: true)
-                                Text(program.displayName(locale: locale))
-                            }
-                        }
-                        .bookmarkAction(BookmarkKey.program(program.id))
-                    }
-                }
-                NavigationLink(value: ResourceDestination.scan) {
-                    Label("Scan & Send", systemImage: "doc.viewfinder")
-                }
-                .bookmarkAction(BookmarkKey.scan)
                 NavigationLink(value: ResourceDestination.links) {
                     HStack(spacing: 10) {
                         ResourceFolderIcon(name: "Useful Links", compact: true)
@@ -151,10 +137,46 @@ private struct ResourceSidebar: View {
                     }
                 }
                 .bookmarkAction(BookmarkKey.links)
+                NavigationLink(value: ResourceDestination.scan) {
+                    Label("Scan & Send", systemImage: "doc.viewfinder")
+                }
+                .bookmarkAction(BookmarkKey.scan)
+            }
+            if visiblePrograms.contains(where: { $0.resourceOrder == 4 }) {
+                Section("More Resources") {
+                    programRows(visiblePrograms.filter { $0.resourceOrder == 4 })
+                }
             }
         }
         .listStyle(.sidebar)
+        .scrollContentBackground(.hidden)
+        .background(AppStyle.background)
         .navigationTitle("Magnum")
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            if let lastSyncedAt = catalogStore.lastSyncedAt {
+                Text("Last synced \(Text(lastSyncedAt, style: .relative)) ago")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .frame(maxWidth: .infinity)
+                    .background(AppStyle.background)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func programRows(_ items: [Program]) -> some View {
+        ForEach(items) { program in
+            NavigationLink(value: ResourceDestination.program(program.id)) {
+                HStack(spacing: 10) {
+                    FolderArtwork(name: program.name, logo: catalogStore.logo(for: program), compact: true)
+                    Text(program.displayName(locale: locale))
+                }
+            }
+            .bookmarkAction(BookmarkKey.program(program.id))
+        }
     }
 }
 
@@ -176,6 +198,8 @@ private struct ResourceDestinationView: View {
                 } else {
                     ContentUnavailableView("Folder unavailable", systemImage: "folder")
                 }
+            case .savedForms:
+                SavedFormsView()
             case .scan:
                 ScanAndSendView()
             case .links:
@@ -195,16 +219,17 @@ private struct ResourceHomeView: View {
     @Environment(\.locale) private var locale
     @State private var resources = SpreadsheetStore.shared
     @State private var search = ""
+    @State private var selectedSavedForm: SavedForm?
     let select: (ResourceDestination) -> Void
 
     private var primaryPrograms: [Program] {
-        catalogStore.programs.filter { $0.isDownloadableForms || $0.name == "Training Resources" }
-            .sorted { $0.isDownloadableForms && !$1.isDownloadableForms }
+        catalogStore.programs.filter { !$0.isCompanyNewsletter && $0.resourceOrder < 4 }
+            .sorted { $0.resourceOrder < $1.resourceOrder }
     }
 
     private var otherPrograms: [Program] {
         catalogStore.programs.filter {
-            !$0.isCompanyNewsletter && !$0.isDownloadableForms && $0.name != "Training Resources"
+            !$0.isCompanyNewsletter && $0.resourceOrder == 4
         }
     }
 
@@ -213,27 +238,53 @@ private struct ResourceHomeView: View {
             if search.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 Section {
                     TrainingIntroduction()
-                        .environment(\.locale, Locale(identifier: "en"))
                         .listRowInsets(EdgeInsets())
                         .listRowBackground(Color.clear)
                         .listRowSeparator(.hidden)
                 }
             }
-            LibraryDiscoverySections(query: search)
+            if let announcement = catalogStore.announcement {
+                AnnouncementSection(announcement: announcement)
+            }
             if search.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                if resources.hasDirectory || !primaryPrograms.isEmpty || !otherPrograms.isEmpty {
-                    Section {
-                        ResourceTileGrid {
-                            if resources.hasDirectory {
-                                Button { select(.directory) } label: {
-                                    ResourceTile(title: AppLanguage.string("Company Directory", locale: locale)) {
-                                        ResourceFolderIcon(name: "Company Directory")
-                                    }
-                                }
-                                .buttonStyle(ResourcePressStyle())
-                                .bookmarkAction(BookmarkKey.directory)
+                // Saved forms are available even before the library has synced.
+                Section("Resources") {
+                    ResourceTileGrid {
+                        ForEach(primaryPrograms) { program in
+                            Button { select(.program(program.id)) } label: {
+                                ProgramResourceTile(program: program)
                             }
-                            ForEach(primaryPrograms + otherPrograms) { program in
+                            .buttonStyle(ResourcePressStyle())
+                            .bookmarkAction(BookmarkKey.program(program.id))
+                        }
+                        Button { select(.savedForms) } label: {
+                            LandingFolderTile(name: "My Forms & Templates", title: AppLanguage.string("My Forms & Templates", locale: locale))
+                        }
+                        .buttonStyle(ResourcePressStyle())
+                        if resources.hasDirectory {
+                            Button { select(.directory) } label: {
+                                LandingFolderTile(name: "Company Directory", title: AppLanguage.string("Company Directory", locale: locale))
+                            }
+                            .buttonStyle(ResourcePressStyle())
+                            .bookmarkAction(BookmarkKey.directory)
+                        }
+                        Button { select(.links) } label: {
+                            LandingFolderTile(name: "Useful Links", title: AppLanguage.string("Useful Links", locale: locale))
+                        }
+                        .buttonStyle(ResourcePressStyle())
+                        .bookmarkAction(BookmarkKey.links)
+                        Button { select(.scan) } label: {
+                            LandingFolderTile(name: "Scan & Send", title: AppLanguage.string("Scan & Send", locale: locale))
+                        }
+                        .buttonStyle(ResourcePressStyle())
+                        .bookmarkAction(BookmarkKey.scan)
+                    }
+                    .resourceGridRow()
+                }
+                if !otherPrograms.isEmpty {
+                    Section("More Resources") {
+                        ResourceTileGrid {
+                            ForEach(otherPrograms) { program in
                                 Button { select(.program(program.id)) } label: {
                                     ProgramResourceTile(program: program)
                                 }
@@ -244,6 +295,10 @@ private struct ResourceHomeView: View {
                         .resourceGridRow()
                     }
                 }
+            }
+            LibraryDiscoverySections(query: search, openSavedForm: { selectedSavedForm = $0 })
+            if search.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                OfflineReadinessView()
             }
             if catalogStore.programs.isEmpty && !resources.hasDirectory && search.isEmpty {
                 Section {
@@ -259,8 +314,22 @@ private struct ResourceHomeView: View {
         .background(Color("WarmBackground"))
         .navigationTitle("Field Resources")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("Field Resources")
+                    .font(.headline)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .minimumScaleFactor(0.8)
+            }
+        }
+        .fullScreenCover(item: $selectedSavedForm) { form in
+            FillableFormView(savedForm: form)
+        }
         .searchable(text: $search, prompt: "Search guides and walkthroughs")
         .refreshable { await catalogStore.syncAll() }
+        .overlay(alignment: .bottomTrailing) { DownloadProgressIndicator() }
         .safeAreaInset(edge: .bottom, spacing: 0) { LibraryStatusFooter() }
     }
 }
@@ -280,9 +349,10 @@ private struct ProgramResourceTile: View {
 
     var body: some View {
         let _ = catalogStore.cacheVersion
-        ResourceTile(title: program.displayName(locale: locale), subtitle: subtitle) {
-            FolderArtwork(name: program.name, logo: catalogStore.logo(for: program))
-        }
+        LandingFolderTile(name: program.name,
+                          title: program.displayName(locale: locale),
+                          subtitle: subtitle,
+                          logo: catalogStore.logo(for: program))
     }
 }
 
@@ -341,7 +411,7 @@ private struct LibraryStatusFooter: View {
 
     private var failedProgramNames: String {
         let names: [String] = failedSyncPrograms.map(\.name)
-        return names.formatted(.list(type: .and))
+        return names.formatted(.list(type: .and).locale(AppLanguage.locale))
     }
 
     var body: some View {
@@ -373,6 +443,12 @@ private struct LibraryStatusFooter: View {
                 )
             } else if let error = SpreadsheetStore.shared.errorMessage {
                 StatusNotice(message: Text(error), systemImage: "exclamationmark.circle", isError: true)
+            } else if let announcementError = catalogStore.announcementError {
+                StatusNotice(
+                    message: Text("Couldn't update the announcement: \(announcementError)"),
+                    systemImage: "exclamationmark.circle",
+                    isError: true
+                )
             } else if let discoveryError = catalogStore.discoveryError {
                 StatusNotice(
                     message: Text("Couldn't update the library: \(discoveryError)"),
@@ -385,16 +461,6 @@ private struct LibraryStatusFooter: View {
                     systemImage: "exclamationmark.circle",
                     isError: true
                 )
-            } else if let lastSyncedAt = catalogStore.lastSyncedAt {
-                // Text's .relative style keeps the "5 min" part ticking on
-                // its own -- a preformatted string would sit stale until
-                // something else happened to re-render this view.
-                Text("Last synced \(Text(lastSyncedAt, style: .relative)) ago")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-                    .padding(.vertical, 10)
-                    .frame(maxWidth: .infinity)
-                    .background(.thinMaterial)
             }
 
         }
@@ -423,11 +489,12 @@ struct DownloadableFormCard: View {
                     Image(systemName: "doc.text.fill")
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(Color("AccentColor"))
-                        .frame(width: 32, height: 32)
+                        .frame(width: 42, height: 48)
                         .background(Color("AccentColor").opacity(0.12), in: RoundedRectangle(cornerRadius: 8))
                         .accessibilityHidden(true)
                     VStack(alignment: .leading, spacing: 4) {
                         Text((file.name as NSString).deletingPathExtension)
+                            .font(.body.weight(.semibold))
                             .foregroundStyle(.primary)
                             .fixedSize(horizontal: false, vertical: true)
                         let _ = catalogStore.cacheVersion
@@ -444,45 +511,20 @@ struct DownloadableFormCard: View {
             .buttonStyle(ResourcePressStyle())
             .accessibilityHint("Opens this form")
 
-            Button {
-                prepareForm(forSharing: false)
+            Menu {
+                Button("Save to Files", systemImage: "folder") { prepareForm(forSharing: false) }
+                Button("Share", systemImage: "square.and.arrow.up") { prepareForm(forSharing: true) }
             } label: {
-                ZStack {
-                    Image(systemName: "arrow.down")
-                        .font(.body.weight(.semibold))
-                        .opacity(isDownloading && !isSharing ? 0 : 1)
-                    if isDownloading && !isSharing {
-                        ProgressView()
-                    }
+                Group {
+                    if isDownloading { ProgressView() }
+                    else { Image(systemName: "ellipsis").font(.body.weight(.semibold)) }
                 }
                 .frame(width: 44, height: 44)
                 .contentShape(Rectangle())
             }
-            .buttonStyle(.borderless)
-            .tint(Color("AccentColor"))
+            .tint(AppStyle.accent)
             .disabled(isDownloading || exportFile != nil || catalogStore.isClearingCache)
-            .accessibilityLabel(isDownloading && !isSharing ? "Downloading \(file.name)" : "Download \(file.name)")
-            .accessibilityHint("Choose a folder in Files to save this form")
-
-            Button {
-                prepareForm(forSharing: true)
-            } label: {
-                ZStack {
-                    Image(systemName: "square.and.arrow.up")
-                        .font(.body.weight(.semibold))
-                        .opacity(isDownloading && isSharing ? 0 : 1)
-                    if isDownloading && isSharing {
-                        ProgressView()
-                    }
-                }
-                .frame(width: 44, height: 44)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.borderless)
-            .tint(Color("AccentColor"))
-            .disabled(isDownloading || exportFile != nil || catalogStore.isClearingCache)
-            .accessibilityLabel("Share \(file.name)")
-            .accessibilityHint("Send a copy using Messages, Mail, AirDrop, or another app")
+            .accessibilityLabel("Form Actions")
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .sheet(item: $exportFile, onDismiss: {
@@ -599,7 +641,7 @@ private struct FormSavePicker: UIViewControllerRepresentable {
         // Choose a directory, then perform one coordinated copy ourselves.
         // This avoids ambiguous provider results from the export/Keep Both flow.
         let picker = UIDocumentPickerViewController(forOpeningContentTypes: [.folder], asCopy: false)
-        picker.title = "Choose a Folder to Save This Form"
+        picker.title = AppLanguage.string("Choose a Folder to Save This Form")
         picker.allowsMultipleSelection = false
         picker.delegate = context.coordinator
         return picker
@@ -736,3 +778,115 @@ private struct ResourceLayoutPreview: View {
     }
 }
 #endif
+
+private struct OfflineReadinessView: View {
+    @EnvironmentObject private var catalogStore: CatalogStore
+    @EnvironmentObject private var network: NetworkMonitor
+    @Environment(\.locale) private var locale
+    @State private var resources = SpreadsheetStore.shared
+    @State private var available = 0
+    @State private var pending: [PendingFile] = []
+    @State private var checked = false
+    @State private var downloading = false
+    @State private var showDetails = false
+
+    private struct PendingFile: Identifiable {
+        let file: DropboxFileMetadata
+        let hasOlderCopy: Bool
+        var id: String { file.id }
+    }
+
+    private struct Snapshot: Equatable {
+        let files: [DropboxFileMetadata]
+        let cacheVersion: Int
+        let isDownloading: Bool
+    }
+
+    private var files: [DropboxFileMetadata] {
+        var seen = Set<String>()
+        let documents = catalogStore.allDocuments.compactMap { item -> DropboxFileMetadata? in
+            if case .dropbox(let file) = item.resource.location { return file }
+            return nil
+        }
+        return (documents + resources.sourceFiles).filter { seen.insert($0.id).inserted }
+    }
+
+    var body: some View {
+        Section("Offline Access") {
+            VStack(alignment: .leading, spacing: 12) {
+                if checked {
+                    Label("\(available) of \(files.count) files available offline",
+                          systemImage: "checkmark.circle")
+                        .font(.subheadline.weight(.semibold))
+                    if !pending.isEmpty {
+                        Button { showDetails = true } label: {
+                            Label("\(pending.count) files need a download or update", systemImage: "arrow.down.circle")
+                                .font(.subheadline)
+                        }
+                    } else if !files.isEmpty {
+                        Text("Downloaded files are up to date.")
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
+                } else {
+                    ProgressView("Checking downloads…")
+                }
+                if let lastSync = catalogStore.lastSyncedAt {
+                    Text("Library last checked: \(lastSync.formatted(Date.FormatStyle(date: .abbreviated, time: .shortened).locale(locale)))")
+                        .font(.caption).foregroundStyle(.secondary)
+                } else {
+                    Text("Update the library online before preparing offline access.")
+                        .font(.caption).foregroundStyle(.secondary)
+                }
+                Button {
+                    downloading = true
+                    Task {
+                        await catalogStore.syncAll()
+                        await catalogStore.downloadAllPending()
+                        downloading = false
+                    }
+                } label: {
+                    Label(downloading || catalogStore.isDownloadingPending ? "Downloading…" : "Download for Offline Use",
+                          systemImage: "arrow.down.to.line")
+                        .frame(maxWidth: .infinity, minHeight: 32)
+                }
+                .buttonStyle(.bordered)
+                .disabled(downloading || catalogStore.isDownloadingPending || catalogStore.isClearingCache || !network.isConnected)
+                if !network.isConnected {
+                    Text("You’re offline. Downloaded files and saved forms are still available.")
+                        .font(.caption).foregroundStyle(.secondary)
+                }
+            }
+            .padding(.vertical, 6)
+        }
+        .task(id: Snapshot(files: files, cacheVersion: catalogStore.cacheVersion,
+                           isDownloading: catalogStore.isDownloadingPending)) {
+            let snapshot = files
+            var ready = 0
+            var remaining: [PendingFile] = []
+            for file in snapshot {
+                let cached = MediaCache.shared.isCached(file)
+                if cached { ready += 1 }
+                if await MediaCache.shared.needsDownload(file) {
+                    remaining.append(PendingFile(file: file, hasOlderCopy: cached))
+                }
+                guard !Task.isCancelled else { return }
+            }
+            available = ready
+            pending = remaining
+            checked = true
+        }
+        .sheet(isPresented: $showDetails) {
+            NavigationStack {
+                List(pending) { item in
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text((item.file.name as NSString).deletingPathExtension).font(.body.weight(.semibold))
+                        Text(item.hasOlderCopy ? "Older copy available offline; update pending" : "Not downloaded")
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
+                }
+                .navigationTitle("Pending Downloads")
+                .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { showDetails = false } } }
+            }
+        }
+    }
+}

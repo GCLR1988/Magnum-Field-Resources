@@ -31,11 +31,11 @@ private enum LibraryEntry: Identifiable {
     func matches(_ query: String) -> Bool {
         switch self {
         case .document(let program, let resource):
-            "\(program.name) \(resource.title)".localizedStandardContains(query)
+            "\(program.name) \(program.displayName(locale: AppLanguage.locale)) \(resource.title)".localizedStandardContains(query)
         case .website(let guide):
             guide.matches(query)
         case .folder(let program, let folder):
-            (folder?.name ?? program.name).localizedStandardContains(query)
+            (folder?.name ?? "\(program.name) \(program.displayName(locale: AppLanguage.locale))").localizedStandardContains(query)
         case .link(let link): link.title.localizedStandardContains(query)
         case .contact(let contact): contact.matches(query)
         case .device(let device): device.rawValue.localizedStandardContains(query)
@@ -53,6 +53,44 @@ struct LibraryDiscoverySections: View {
     @Environment(\.locale) private var locale
     @State private var resources = SpreadsheetStore.shared
     let query: String
+    let openSavedForm: (SavedForm) -> Void
+    @State private var filter: LibrarySearchFilter = .all
+    @State private var downloadedOnly = false
+    @State private var recents = RecentStore.shared
+
+    private enum LibrarySearchFilter: String, CaseIterable, Identifiable {
+        case all, forms, videos, guides
+        var id: String { rawValue }
+        var title: LocalizedStringKey {
+            switch self {
+            case .all: "All"
+            case .forms: "Forms"
+            case .videos: "Videos"
+            case .guides: "Guides"
+            }
+        }
+    }
+
+    private func accepts(_ entry: LibraryEntry) -> Bool {
+        if downloadedOnly {
+            guard case .document(_, let resource) = entry, resource.localSearchURL != nil else { return false }
+        }
+        switch filter {
+        case .all: return true
+        case .forms:
+            if case .document(let program, let resource) = entry { return program.opensInFormEditor(resource) }
+        case .videos:
+            if case .document(_, let resource) = entry { return resource.kind == .video }
+        case .guides:
+            switch entry {
+            case .document(let program, let resource):
+                return resource.kind != .video && !program.opensInFormEditor(resource)
+            case .website, .device, .microsoft: return true
+            default: break
+            }
+        }
+        return false
+    }
 
     private var entries: [LibraryEntry] {
         var result = catalogStore.allDocuments.map { LibraryEntry.document($0.program, $0.resource) }
@@ -86,6 +124,15 @@ struct LibraryDiscoverySections: View {
         let _ = locale.identifier // Refresh localized search matches when the interface language changes.
         let search = query.trimmingCharacters(in: .whitespacesAndNewlines)
         if search.isEmpty {
+            ContinueEditingSection(open: openSavedForm)
+            let recent = recents.keys.compactMap { key in entries.first { $0.id == key } }
+            if !recent.isEmpty {
+                Section("Recently Used") {
+                    ForEach(Array(recent.prefix(3))) { entry in
+                        LibraryEntryRow(entry: entry).documentRowStyle()
+                    }
+                }
+            }
             let bookmarked = entries.filter { pinnedStore.isPinned($0.id) }
             Section {
                 ForEach(bookmarked) { entry in
@@ -102,20 +149,33 @@ struct LibraryDiscoverySections: View {
                 Text("Bookmarked").textCase(nil)
             }
         } else {
-            let matches = entries.filter { $0.matches(search) }
-            if matches.isEmpty {
-                ContentUnavailableView.search(text: search)
-                    .listRowBackground(Color.clear)
-            } else {
-                Section {
-                    ForEach(matches) { entry in
-                        LibraryEntryRow(entry: entry)
-                            .documentRowStyle()
+            Section {
+                Picker("Resource type", selection: $filter) {
+                    ForEach(LibrarySearchFilter.allCases) { filter in
+                        Text(filter.title).tag(filter)
                     }
-                } header: {
-                    Text("Results (\(matches.count))").textCase(nil)
                 }
+                Toggle("Downloaded only", isOn: $downloadedOnly)
             }
+            let filtered = entries.filter { accepts($0) }
+            let matches = filtered.filter { $0.matches(search) }
+            Section {
+                ForEach(matches) { entry in
+                    LibraryEntryRow(entry: entry)
+                        .documentRowStyle()
+                }
+                if matches.isEmpty {
+                    Text("No matching names. Check document content results below.")
+                        .foregroundStyle(.secondary)
+                }
+            } header: {
+                Text("Matching Names (\(matches.count))").textCase(nil)
+            }
+            let documents = filtered.compactMap { entry -> LibrarySearchDocument? in
+                guard case .document(let program, let resource) = entry, resource.kind == .pdf else { return nil }
+                return LibrarySearchDocument(program: program, resource: resource)
+            }
+            PDFContentResultsSection(query: search, documents: documents, cacheVersion: catalogStore.cacheVersion)
         }
     }
 }
@@ -201,6 +261,33 @@ private struct LibraryEntryRow: View {
         }
         .fullScreenCover(item: $selectedForm) { resource in
             FillableFormView(resource: resource)
+        }
+    }
+}
+
+private struct ContinueEditingSection: View {
+    @State private var store = SavedFormStore.shared
+    @State private var recents = RecentStore.shared
+    let open: (SavedForm) -> Void
+
+    private var forms: [SavedForm] {
+        let recentlyOpened = recents.keys.compactMap { key in
+            store.drafts.first { key == "saved-form:\($0.id.uuidString)" }
+        }
+        var seen = Set<UUID>()
+        return Array((recentlyOpened + store.drafts).filter { seen.insert($0.id).inserted }.prefix(3))
+    }
+
+    var body: some View {
+        if !forms.isEmpty {
+            Section("Continue Editing") {
+                ForEach(forms) { form in
+                    Button { open(form) } label: { SavedFormRow(form: form) }
+                        .buttonStyle(.plain)
+                        .documentRowStyle()
+                }
+                NavigationLink("All Forms & Templates") { SavedFormsView() }
+            }
         }
     }
 }

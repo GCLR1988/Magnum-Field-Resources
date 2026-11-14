@@ -36,19 +36,14 @@ struct WalkthroughRow: View {
             rowIcon
 
             VStack(alignment: .leading, spacing: 4) {
-                HStack(spacing: 6) {
-                    Text(resource.title)
-                        .font(AppStyle.rowTitle)
-                        .multilineTextAlignment(.leading)
-                    if isNew {
-                        Text("New")
-                            .font(.caption2.weight(.medium))
-                            .foregroundStyle(.secondary)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(Color.primary.opacity(0.06), in: Capsule())
-                            .fixedSize()
-                    }
+                Text(resource.title)
+                    .font(.body.weight(.semibold))
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                if isNew {
+                    Text("New")
+                        .font(.caption2.weight(.medium))
+                        .foregroundStyle(AppStyle.accent)
                 }
                 if let subtitle {
                     Text(subtitle)
@@ -140,14 +135,14 @@ struct WalkthroughRow: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 20, height: 20)
-                .frame(width: 32, height: 32)
+                .frame(width: 42, height: 48)
                 .background(Color("WarmBackground"), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
         } else {
             Image(systemName: iconName)
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(iconColor)
-                .frame(width: 32, height: 32)
-                .background(iconColor.opacity(0.15), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .frame(width: 42, height: 48)
+                .background(iconColor.opacity(0.09), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
         }
     }
 

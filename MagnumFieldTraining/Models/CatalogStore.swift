@@ -15,6 +15,8 @@ final class CatalogStore: ObservableObject {
         case synced(Date)
     }
 
+    @Published private(set) var announcement: Announcement?
+    @Published private(set) var announcementError: String?
     @Published private(set) var programs: [Program]
     @Published private(set) var documentsByProgram: [String: [WalkthroughResource]] = [:]
     @Published private(set) var syncStatus: [String: SyncStatus] = [:]
@@ -72,6 +74,7 @@ final class CatalogStore: ObservableObject {
         // instead of "No Programs Yet" until a sync can reach Dropbox again.
         let localPrograms = ProgramData.programs
         if let snapshot = Self.loadSnapshot() {
+            announcement = snapshot.announcement
             programs = snapshot.programs + localPrograms
             rootFolderByProgram = snapshot.rootFolderByProgram
             logoByProgram = snapshot.logoByProgram
@@ -157,6 +160,7 @@ final class CatalogStore: ObservableObject {
     }
 
     private func performSyncAll() async {
+        await refreshAnnouncement()
         await refreshPrograms()
         guard !Task.isCancelled, !isClearingCache else { return }
         let dropboxPrograms = programs.filter {
@@ -263,6 +267,22 @@ final class CatalogStore: ObservableObject {
         // A full sync scans once after every folder is ready, rather than rescanning
         // the entire library for each folder while the other listings are still changing.
         if syncAllTask == nil { await refreshPendingDownloadsStatus() }
+    }
+
+    private func refreshAnnouncement() async {
+        guard DropboxConfig.isConfigured, !Task.isCancelled, !isClearingCache else { return }
+        do {
+            let latest = try await DropboxService.loadAnnouncement()
+            try Task.checkCancellation()
+            guard !isClearingCache else { return }
+            announcement = latest
+            announcementError = nil
+            await saveSnapshot()
+        } catch {
+            // Keep the last good announcement when offline or when the file is invalid.
+            guard !Task.isCancelled else { return }
+            announcementError = error.localizedDescription
+        }
     }
 
     /// Discovers one Program per top-level folder in the Dropbox app folder, and merges
@@ -430,6 +450,7 @@ final class CatalogStore: ObservableObject {
         var rootFolderByProgram: [String: WalkthroughFolder]
         var logoByProgram: [String: DropboxFileMetadata]
         var lastSyncedAt: Date?
+        var announcement: Announcement?
     }
 
     private static var snapshotURL: URL {
@@ -452,7 +473,8 @@ final class CatalogStore: ObservableObject {
             programs: dropboxPrograms,
             rootFolderByProgram: rootFolderByProgram.filter { programIDs.contains($0.key) },
             logoByProgram: logoByProgram.filter { programIDs.contains($0.key) },
-            lastSyncedAt: lastSyncedAt
+            lastSyncedAt: lastSyncedAt,
+            announcement: announcement
         )
         let url = Self.snapshotURL
         let previous = snapshotWriteTask

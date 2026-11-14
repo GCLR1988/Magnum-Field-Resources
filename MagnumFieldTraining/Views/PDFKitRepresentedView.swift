@@ -9,12 +9,16 @@ import PDFKit
 struct PDFKitRepresentedView: UIViewRepresentable {
     let document: PDFDocument
     let pdfView: PDFView
+    var initialPageIndex: Int? = nil
 
     func makeUIView(context: Context) -> PDFView {
         pdfView.autoScales = true
         pdfView.displayMode = .singlePageContinuous
         pdfView.displayDirection = .vertical
         pdfView.document = document
+        if let initialPageIndex, let page = document.page(at: initialPageIndex) {
+            pdfView.go(to: page)
+        }
         return pdfView
     }
 

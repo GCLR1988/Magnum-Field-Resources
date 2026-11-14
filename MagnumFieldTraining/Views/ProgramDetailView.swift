@@ -68,6 +68,14 @@ struct ProgramDetailView: View {
 
     var body: some View {
         List {
+            if isRoot {
+                Text(program.displayName(locale: locale))
+                    .font(.title.bold())
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityAddTraits(.isHeader)
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
+            }
             Section {
                 if !tileFolders.isEmpty || showsMicrosoftTraining {
                     ResourceTileGrid {
@@ -160,7 +168,7 @@ struct ProgramDetailView: View {
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
         .background(Color("WarmBackground"))
-        .navigationTitle(isRoot ? program.displayName(locale: locale) : currentFolder.name)
+        .navigationTitle(isRoot ? AppLanguage.string("Resources", locale: locale) : currentFolder.name)
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(item: $selectedFolderID) { id in
             if let child = catalogStore.rootFolder(for: program).folder(withID: id) {
@@ -191,6 +199,13 @@ struct ProgramDetailView: View {
             }
         }
         .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text(isRoot ? AppLanguage.string("Resources", locale: locale) : currentFolder.name)
+                    .font(.headline)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                    .truncationMode(.tail)
+            }
             if isRoot, isDropboxBacked {
                 ToolbarItem(placement: .topBarTrailing) {
                     if isDownloadingAll {
@@ -206,6 +221,7 @@ struct ProgramDetailView: View {
                         } label: {
                             Image(systemName: "arrow.down.circle")
                         }
+                        .accessibilityLabel("Download All")
                         .disabled(currentFolder.allResources.isEmpty)
                     }
                 }
@@ -222,6 +238,7 @@ struct ProgramDetailView: View {
                 await catalogStore.sync(program)
             }
         }
+        .overlay(alignment: .bottomTrailing) { DownloadProgressIndicator() }
         .safeAreaInset(edge: .bottom, spacing: 0) {
             if isRoot {
                 VStack(spacing: 0) {
@@ -273,10 +290,7 @@ struct ProgramDetailView: View {
 
     /// Each subfolder has its own symbol, with full titles that expand for larger text.
     private func folderTile(_ folder: WalkthroughFolder) -> some View {
-        ResourceTile(title: folder.name,
-                     subtitle: folderCaption(folder)) {
-            FolderArtwork(name: folder.name, logo: folder.logo, isSubfolder: true)
-        }
+        SubfolderTile(name: folder.name, subtitle: folderCaption(folder), logo: folder.logo)
         .accessibilityHint("Opens folder")
     }
 

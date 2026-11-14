@@ -6,7 +6,7 @@ enum DownloadRetryPolicy {
         let retryAfter: Double?
 
         var errorDescription: String? {
-            "The download service is temporarily unavailable (HTTP \(status)). Please retry."
+            AppLanguage.string("The download service is temporarily unavailable (HTTP \(status)). Please retry.")
         }
     }
 

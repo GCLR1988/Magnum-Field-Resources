@@ -1,22 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Scheme LastUpgradeVersion="2710" version="1.3">
-   <BuildAction parallelizeBuildables="YES" buildImplicitDependencies="YES">
+<Scheme
+   LastUpgradeVersion = "2720"
+   version = "1.7">
+   <BuildAction
+      parallelizeBuildables = "YES"
+      buildImplicitDependencies = "YES">
       <BuildActionEntries>
-         <BuildActionEntry buildForTesting="NO" buildForRunning="YES" buildForProfiling="YES" buildForArchiving="YES" buildForAnalyzing="YES">
-            <BuildableReference BuildableIdentifier="primary" BlueprintIdentifier="4C2B07073750C788860C4667" BuildableName="MagnumFieldTraining.app" BlueprintName="MagnumFieldTraining" ReferencedContainer="container:MagnumFieldTraining.xcodeproj"/>
+         <BuildActionEntry
+            buildForTesting = "NO"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "4C2B07073750C788860C4667"
+               BuildableName = "MagnumFieldTraining.app"
+               BlueprintName = "MagnumFieldTraining"
+               ReferencedContainer = "container:MagnumFieldTraining.xcodeproj">
+            </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
-   <LaunchAction buildConfiguration="Release" selectedDebuggerIdentifier="" selectedLauncherIdentifier="Xcode.IDEFoundation.Launcher.PosixSpawn" launchStyle="0" useCustomWorkingDirectory="NO" ignoresPersistentStateOnLaunch="NO" debugDocumentVersioning="YES" allowLocationSimulation="YES">
-      <BuildableProductRunnable runnableDebuggingMode="0">
-         <BuildableReference BuildableIdentifier="primary" BlueprintIdentifier="4C2B07073750C788860C4667" BuildableName="MagnumFieldTraining.app" BlueprintName="MagnumFieldTraining" ReferencedContainer="container:MagnumFieldTraining.xcodeproj"/>
+   <TestAction
+      buildConfiguration = "Debug"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      shouldAutocreateTestPlan = "YES">
+   </TestAction>
+   <LaunchAction
+      buildConfiguration = "Release"
+      selectedDebuggerIdentifier = ""
+      selectedLauncherIdentifier = "Xcode.IDEFoundation.Launcher.PosixSpawn"
+      launchStyle = "0"
+      useCustomWorkingDirectory = "NO"
+      ignoresPersistentStateOnLaunch = "NO"
+      debugDocumentVersioning = "YES"
+      debugServiceExtension = "internal"
+      allowLocationSimulation = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "4C2B07073750C788860C4667"
+            BuildableName = "MagnumFieldTraining.app"
+            BlueprintName = "MagnumFieldTraining"
+            ReferencedContainer = "container:MagnumFieldTraining.xcodeproj">
+         </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
-   <ProfileAction buildConfiguration="Release" shouldUseLaunchSchemeArgsEnv="YES" savedToolIdentifier="" useCustomWorkingDirectory="NO" debugDocumentVersioning="YES">
-      <BuildableProductRunnable runnableDebuggingMode="0">
-         <BuildableReference BuildableIdentifier="primary" BlueprintIdentifier="4C2B07073750C788860C4667" BuildableName="MagnumFieldTraining.app" BlueprintName="MagnumFieldTraining" ReferencedContainer="container:MagnumFieldTraining.xcodeproj"/>
+   <ProfileAction
+      buildConfiguration = "Release"
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      savedToolIdentifier = ""
+      useCustomWorkingDirectory = "NO"
+      debugDocumentVersioning = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "4C2B07073750C788860C4667"
+            BuildableName = "MagnumFieldTraining.app"
+            BlueprintName = "MagnumFieldTraining"
+            ReferencedContainer = "container:MagnumFieldTraining.xcodeproj">
+         </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
-   <AnalyzeAction buildConfiguration="Release"/>
-   <ArchiveAction buildConfiguration="Release" revealArchiveInOrganizer="YES"/>
+   <AnalyzeAction
+      buildConfiguration = "Release">
+   </AnalyzeAction>
+   <ArchiveAction
+      buildConfiguration = "Release"
+      revealArchiveInOrganizer = "YES">
+   </ArchiveAction>
 </Scheme>

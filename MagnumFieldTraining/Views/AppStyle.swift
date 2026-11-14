@@ -5,11 +5,14 @@ enum AppStyle {
     static let accent = Color("AccentColor")
     static let background = Color("WarmBackground")
     static let surface = Color("WarmCard")
-    static let border = Color.primary.opacity(0.08)
-    static let cornerRadius: CGFloat = 18
-    static let inset: CGFloat = 16
-    static let sectionSpacing: CGFloat = 20
-    static let rowTitle = Font.body.weight(.medium)
+    static let border = Color.primary.opacity(0.10)
+    // Website brand colors; fixed burgundy stays consistent on branded surfaces.
+    static let brand = Color(red: 120 / 255, green: 35 / 255, blue: 47 / 255)
+    static let charcoal = Color(red: 13 / 255, green: 14 / 255, blue: 16 / 255)
+    static let cornerRadius: CGFloat = 10
+    static let inset: CGFloat = 18
+    static let sectionSpacing: CGFloat = 26
+    static let rowTitle = Font.body.weight(.semibold)
     static let caption = Font.caption
 }
 

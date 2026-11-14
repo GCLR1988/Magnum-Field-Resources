@@ -19,8 +19,8 @@ private struct FormGuideSection: View {
         Section {
             Label {
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("Save before closing").font(.headline)
-                    Text("Unfinished forms are not saved as drafts. Save or send your completed copy before tapping Close. Opening the form again starts with a fresh template.")
+                    Text("Pick up where you left off").font(.headline)
+                    Text("Library forms appear in My Forms & Templates only after you add them. Fill in your information, tap the red Add to My Forms & Templates button, and choose Save Form. Your current entries and markup are included. Changes to forms already saved there are kept automatically.")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
@@ -30,9 +30,13 @@ private struct FormGuideSection: View {
             }
             .padding(.vertical, 4)
         }
+        Section("Personal templates") {
+            AppGuideTip(title: "Reuse your usual information", symbol: "doc.on.doc",
+                        detail: "Fill out a form, tap the red Add to My Forms & Templates button at the bottom, and choose Save as Reusable Template. Under Resources, open My Forms & Templates and tap your template to create a separate form with its saved information. Update the date and any other details, review signatures, then share. Touch and hold a saved item to rename or delete it, or edit a template.")
+        }
         Section("Fill out a form") {
             AppGuideStep(number: "1", title: "Open the form",
-                         detail: "Open Downloadable Forms or your forms folder, then tap the form’s name. The download and share buttons beside the name export the blank template; tap the name to fill it out.")
+                         detail: "Open Safety Forms or Payroll Forms, then tap a form’s name to fill it out. The menu beside the name lets you save or share the blank form.")
             AppGuideStep(number: "2", title: "Enter your information",
                          detail: "Tap a fillable text field to type, or tap a checkbox to select it. Pinch to zoom and swipe to move between pages. If an area does not accept typing, use Markup to write on it.")
             AppGuideStep(number: "3", title: "Sign or write with Markup",
@@ -51,7 +55,7 @@ private struct AppBasicsGuideSection: View {
     var body: some View {
         Section("Everyday shortcuts") {
             AppGuideTip(title: "Find and bookmark resources", symbol: "bookmark",
-                        detail: "Open a folder or use the Home search. Touch and hold an item, then choose Bookmark. Find saved items under Bookmarked on Home. Touch and hold again and choose Remove Bookmark to remove one.")
+                        detail: "Use Home search to find names and text inside downloaded PDFs. Filter by forms, videos, guides, or downloaded files. Tap a content result to open its matching page. Scanned PDFs without a text layer cannot be searched. Touch and hold a resource to bookmark it.")
             AppGuideTip(title: "Use the Company Directory", symbol: "person.crop.rectangle",
                         detail: "Search by name, email, or phone number. Tap a phone number to call or an email address to write a message. Use the small person-plus button on the right to review and save someone to Apple Contacts.")
             AppGuideTip(title: "Scan paper documents", symbol: "doc.viewfinder",
@@ -65,7 +69,7 @@ private struct AppBasicsGuideSection: View {
             AppGuideTip(title: "Refresh or retry", symbol: "arrow.clockwise",
                         detail: "Pull down on Home or a folder to check for updates. If a file will not open, check your connection and try again. With Wi-Fi Only for Videos enabled, connect to Wi-Fi or choose Download Anyway when offered.")
             AppGuideTip(title: "Free up storage", symbol: "internaldrive",
-                        detail: "Clear Cached Files in Settings removes downloaded library copies. You will need internet to download them again. Save completed forms separately in Files before closing the editor.")
+                        detail: "Clear Cached Files in Settings removes downloaded library copies. Your form drafts and personal templates are kept separately and remain on this device. You will need internet to download library files again.")
         }
     }
 }

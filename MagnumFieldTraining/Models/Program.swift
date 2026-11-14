@@ -67,8 +67,25 @@ struct Program: Identifiable, Hashable, Codable {
     let name: String
     let source: ProgramSource
 
-    /// Only app-defined categories are localized; Dropbox names and identifiers stay intact.
+    /// Shared ordering for the sidebar and landing page, independent of language.
+    var resourceOrder: Int {
+        let words = name.lowercased().split { !$0.isLetter }
+        if Self.isWeeklySafetyFolder(name) { return 0 }
+        if words.contains("safety") && (words.contains("form") || words.contains("forms")) { return 1 }
+        if words.contains("payroll") { return 2 }
+        if words.contains("training") && words.contains("resources") { return 3 }
+        return 4
+    }
+
+    /// Localize known categories while preserving custom library names.
     func displayName(locale: Locale) -> String {
+        switch resourceOrder {
+        case 0: return AppLanguage.string("Weekly Safety Topics", locale: locale)
+        case 1: return AppLanguage.string("Safety Forms", locale: locale)
+        case 2: return AppLanguage.string("Payroll Forms", locale: locale)
+        case 3: return AppLanguage.string("Training Resources", locale: locale)
+        default: break
+        }
         switch name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() {
         case "training resources": return AppLanguage.string("Training Resources", locale: locale)
         case "downloadable forms": return AppLanguage.string("Downloadable Forms", locale: locale)
@@ -104,7 +121,7 @@ struct Program: Identifiable, Hashable, Codable {
 
     private static func isFormFolder(_ name: String) -> Bool {
         let words = name.lowercased().split { !$0.isLetter }
-        return words.contains("forms") || words.contains("form") || isWeeklySafetyFolder(name)
+        return words.contains("forms") || words.contains("form") || words.contains("payroll") || isWeeklySafetyFolder(name)
     }
 
     private static func isWeeklySafetyFolder(_ name: String) -> Bool {

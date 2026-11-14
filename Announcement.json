@@ -1,0 +1,14 @@
+{
+  "id": "safety-training-2026-11-20",
+  "enabled": true,
+  "expiresAt": "2026-11-20T17:00:00-08:00",
+  "link": null,
+  "en": {
+    "title": "Safety Reminder",
+    "message": "Please complete your fall protection training by Friday."
+  },
+  "es": {
+    "title": "Recordatorio de seguridad",
+    "message": "Completa la capacitación sobre protección contra caídas antes del viernes."
+  }
+}

@@ -115,6 +115,36 @@ enum DropboxService {
         }
     }
 
+    /// Only a successful root listing can establish that an announcement was removed.
+    static func loadAnnouncement() async throws -> Announcement? {
+        let entries = try await listAllEntries(path: "")
+        try Task.checkCancellation()
+        // Structured announcements take precedence, including when explicitly disabled.
+        let jsonEntry = entries.first { $0.tag == "file" && $0.name?.lowercased() == "announcement.json" }
+        let textEntry = entries.first { $0.tag == "file" && $0.name?.lowercased() == "announcement.txt" }
+        guard let entry = jsonEntry ?? textEntry else { return nil }
+        guard let id = entry.id, let name = entry.name,
+              let path = entry.path_lower, let rev = entry.rev else {
+            throw DropboxError.requestFailed("Announcement metadata is incomplete.")
+        }
+        let file = DropboxFileMetadata(id: id, name: name, pathLower: path, rev: rev,
+                                       serverModified: entry.server_modified)
+        let temporaryURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString + ".txt")
+        defer { try? FileManager.default.removeItem(at: temporaryURL) }
+        try await download(file, to: temporaryURL)
+        try Task.checkCancellation()
+        let data = try Data(contentsOf: temporaryURL)
+        guard data.count <= 65_536, let text = String(data: data, encoding: .utf8) else {
+            throw DropboxError.requestFailed("The announcement must be UTF-8 text under 64 KB.")
+        }
+        if jsonEntry != nil {
+            let json = text.trimmingCharacters(in: CharacterSet(charactersIn: "\u{FEFF}"))
+            return try Announcement.parseJSON(Data(json.utf8))
+        }
+        return Announcement(text: text)
+    }
+
     private static func listAllEntries(path: String, recursive: Bool = false) async throws -> [Entry] {
         var response = try await listFolder(path: path, recursive: recursive)
         var allEntries = response.entries
