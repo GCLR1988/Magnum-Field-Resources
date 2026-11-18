@@ -1,5 +1,37 @@
 # Connecting a Program to Dropbox
 
+## Xcode Cloud builds
+
+The project compiles `MagnumFieldTraining/Sync/StagingCredentials.local.swift`.
+This file is intentionally ignored by Git, so it is unavailable in a fresh cloud
+checkout. Do not commit the credentials file to fix a missing-input build error.
+
+The executable `ci_scripts/ci_post_clone.sh` runs after Xcode Cloud clones the
+repository. Its Swift helper generates the required file from these workflow
+environment variables:
+
+| Secret environment variable | Value from the existing local credentials file |
+| --- | --- |
+| `DROPBOX_APP_KEY` | `StagingCredentials.appKey` |
+| `DROPBOX_APP_SECRET` | `StagingCredentials.appSecret` |
+| `DROPBOX_REFRESH_TOKEN` | `StagingCredentials.refreshToken` |
+
+In Xcode Cloud, edit the workflow's Environment settings and add all three
+variables, marking each **Secret** (or **Keep value redacted** in Xcode).
+Copy only the string values, without Swift quotation marks. Use the credentials
+for the same Dropbox source as the local app. Despite the historical filename,
+both Debug and Release currently use this source.
+
+Commit and push both files in `ci_scripts` along with the intended app changes,
+then start a build from that updated commit. Retrying the old commit will not
+include the fix. The script fails early with the missing variable's name if
+configuration is incomplete; it never prints credential values.
+
+This keeps secrets out of Git and build logs. It preserves the existing app
+architecture, which embeds those credentials in the compiled application.
+
+Apple reference: https://developer.apple.com/documentation/xcode/writing-custom-build-scripts
+
 This lets you drop a PDF into a Dropbox folder and have it show up in the
 app automatically -- no rebuild needed. The app authenticates as itself
 (no one has to sign in), and can only ever see one dedicated folder.
