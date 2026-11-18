@@ -7,19 +7,36 @@ struct FormField: Identifiable {
     let pageIndex: Int
     let annotation: PDFAnnotation
 
-    var name: String {
+    private var sourceName: String {
         if let label = annotation.value(forAnnotationKey: .widgetTextLabelUI) as? String,
            !label.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return label
         }
-        let identifier = (annotation.fieldName?.split(separator: ".").last.map(String.init) ?? "")
+        return (annotation.fieldName?.split(separator: ".").last.map(String.init) ?? "")
             .replacingOccurrences(of: "\\[\\d+\\]", with: "", options: .regularExpression)
+    }
+
+    var name: String {
+        let identifier = sourceName
         // Generated PDF/XFA identifiers are implementation details, not useful field labels.
-        if identifier.isEmpty || identifier.range(of: "^[A-Za-z]{1,3}\\d+(?:_\\d+)*$", options: .regularExpression) != nil {
+        if identifier.isEmpty || Self.isGeneratedIdentifier(identifier) {
             let number = (Int(id.split(separator: ":").last ?? "") ?? 0) + 1
             return AppLanguage.string("Field \(number)")
         }
+        if annotation.value(forAnnotationKey: .widgetTextLabelUI) as? String == identifier {
+            return identifier
+        }
         return identifier.replacingOccurrences(of: "_", with: " ")
+    }
+
+    private static func isGeneratedIdentifier(_ value: String) -> Bool {
+        // Generated names need not match the printed labels on a safety PDF.
+        // Number them rather than guessing a meaning from names such as newTxtJobName10.
+        let identifier = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        return identifier.range(
+            of: "^(?:[A-Za-z]{1,3}\\d+(?:_\\d+)*|newTxt[A-Za-z]+\\d+)$",
+            options: .regularExpression
+        ) != nil
     }
 
     var isRequired: Bool {
@@ -42,7 +59,8 @@ struct FormField: Identifiable {
 
     var isDate: Bool {
         guard annotation.widgetFieldType == .text, !annotation.isReadOnly else { return false }
-        let label = name.replacingOccurrences(of: "([a-z])([A-Z])", with: "$1 $2", options: .regularExpression)
+        // Keep date detection independent of the numbered display fallback.
+        let label = sourceName.replacingOccurrences(of: "([a-z])([A-Z])", with: "$1 $2", options: .regularExpression)
         let words = label.lowercased().split { !$0.isLetter }
         return words.contains("date") || words.contains("fecha")
     }

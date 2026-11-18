@@ -65,6 +65,10 @@
 		E2CD147230918A3F00ACEBB8 /* HardHatScores.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CD147130918A3F00ACEBB8 /* HardHatScores.swift */; };
 		E2CD147430918A9600ACEBB8 /* HardHatGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CD147330918A9600ACEBB8 /* HardHatGameView.swift */; };
 		E2CD1476309191AC00ACEBB8 /* ScanAndSendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2CD1475309191AC00ACEBB8 /* ScanAndSendView.swift */; };
+		E2F99A5A30AABC1E00431C1A /* PhotoMarkupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F99A5930AABC1E00431C1A /* PhotoMarkupView.swift */; };
+		E2F99A5C30AABE9A00431C1A /* PhotoFieldToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F99A5B30AABE9A00431C1A /* PhotoFieldToolsView.swift */; };
+		E2F99A6030AAD3C000431C1A /* HardHatScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F99A5F30AAD3C000431C1A /* HardHatScene.swift */; };
+		E2F99A6230AAD3DD00431C1A /* HardHatFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F99A6130AAD3DD00431C1A /* HardHatFeedback.swift */; };
 		E2FEF29A30913763009B54CA /* ExcelWorkbook.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FEF29930913763009B54CA /* ExcelWorkbook.swift */; };
 		E2FEF29C30913778009B54CA /* SpreadsheetResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FEF29B30913778009B54CA /* SpreadsheetResources.swift */; };
 		E2FEF29E30913794009B54CA /* SpreadsheetStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2FEF29D30913794009B54CA /* SpreadsheetStore.swift */; };
@@ -127,7 +131,7 @@
 		E27FA697308D7A92000F6AA2 /* DownloadRetryPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadRetryPolicy.swift; sourceTree = "<group>"; };
 		E27FA699308D7AB4000F6AA2 /* DownloadRecoveryNotice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadRecoveryNotice.swift; sourceTree = "<group>"; };
 		E27FA69B308D8580000F6AA2 /* FormExportFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormExportFile.swift; sourceTree = "<group>"; };
-		E2A0EB5D30A812BB008B32BD /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		E2A0EB5D30A812BB008B32BD /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		E2A5A1E1309152A10014CC28 /* AppLockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockView.swift; sourceTree = "<group>"; };
 		E2C50D7730913FD600113F1B /* StagingCredentials.local.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StagingCredentials.local.swift; sourceTree = "<group>"; };
 		E2C50D793091479E00113F1B /* FillableFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FillableFormView.swift; sourceTree = "<group>"; };
@@ -142,6 +146,10 @@
 		E2CD147130918A3F00ACEBB8 /* HardHatScores.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HardHatScores.swift; sourceTree = "<group>"; };
 		E2CD147330918A9600ACEBB8 /* HardHatGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HardHatGameView.swift; sourceTree = "<group>"; };
 		E2CD1475309191AC00ACEBB8 /* ScanAndSendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanAndSendView.swift; sourceTree = "<group>"; };
+		E2F99A5930AABC1E00431C1A /* PhotoMarkupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoMarkupView.swift; sourceTree = "<group>"; };
+		E2F99A5B30AABE9A00431C1A /* PhotoFieldToolsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoFieldToolsView.swift; sourceTree = "<group>"; };
+		E2F99A5F30AAD3C000431C1A /* HardHatScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HardHatScene.swift; sourceTree = "<group>"; };
+		E2F99A6130AAD3DD00431C1A /* HardHatFeedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HardHatFeedback.swift; sourceTree = "<group>"; };
 		E2FEF29930913763009B54CA /* ExcelWorkbook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExcelWorkbook.swift; sourceTree = "<group>"; };
 		E2FEF29B30913778009B54CA /* SpreadsheetResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpreadsheetResources.swift; sourceTree = "<group>"; };
 		E2FEF29D30913794009B54CA /* SpreadsheetStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpreadsheetStore.swift; sourceTree = "<group>"; };
@@ -256,6 +264,10 @@
 				E22F04BD30A78DDB00FC1127 /* FormAssistantView.swift */,
 				E22F04BF30A78DFD00FC1127 /* SavedFormRow.swift */,
 				E23D299E30A803630063627D /* AnnouncementBanner.swift */,
+				E2F99A5930AABC1E00431C1A /* PhotoMarkupView.swift */,
+				E2F99A5B30AABE9A00431C1A /* PhotoFieldToolsView.swift */,
+				E2F99A5F30AAD3C000431C1A /* HardHatScene.swift */,
+				E2F99A6130AAD3DD00431C1A /* HardHatFeedback.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -377,6 +389,7 @@
 				E27FA688308D7495000F6AA2 /* DeviceGettingStartedView.swift in Sources */,
 				E27FA692308D77CF000F6AA2 /* WebGuideRow.swift in Sources */,
 				E22F04B630A7712700FC1127 /* PDFContentSearch.swift in Sources */,
+				E2F99A6230AAD3DD00431C1A /* HardHatFeedback.swift in Sources */,
 				E2FEF2A0309137BE009B54CA /* CompanyDirectoryView.swift in Sources */,
 				0AE1A60759D3E382DA7F4706 /* CatalogStore.swift in Sources */,
 				E2246862309288A000BD5C10 /* AppGuideView.swift in Sources */,
@@ -394,6 +407,7 @@
 				E2CD147230918A3F00ACEBB8 /* HardHatScores.swift in Sources */,
 				0FE684DA68EDED3A896EA7F0 /* DropboxAuthService.swift in Sources */,
 				E2CD146E3091870A00ACEBB8 /* AppStyle.swift in Sources */,
+				E2F99A6030AAD3C000431C1A /* HardHatScene.swift in Sources */,
 				A4758201E45714A7FE78E2F1 /* DropboxService.swift in Sources */,
 				44DBA0121E418CAF43C79DF1 /* MediaCache.swift in Sources */,
 				14B915D8338F45EC816EC3A7 /* SettingsStore.swift in Sources */,
@@ -416,7 +430,9 @@
 				E27FA694308D77CF000F6AA2 /* LibraryDiscoverySections.swift in Sources */,
 				0D01A256EC3549CCB2F90148 /* PDFThumbnailBar.swift in Sources */,
 				8E0DB0DFD61E43F489611A33 /* CardRowStyle.swift in Sources */,
+				E2F99A5A30AABC1E00431C1A /* PhotoMarkupView.swift in Sources */,
 				E22F04BE30A78DDB00FC1127 /* FormAssistantView.swift in Sources */,
+				E2F99A5C30AABE9A00431C1A /* PhotoFieldToolsView.swift in Sources */,
 				9B7EE1255E5347ECAE70EC8E /* EmptyStateCard.swift in Sources */,
 				E2CD146C3091737C00ACEBB8 /* AppLanguage.swift in Sources */,
 				E2C50D7830913FD600113F1B /* StagingCredentials.local.swift in Sources */,
@@ -437,25 +453,25 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Field Resources";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
-				INFOPLIST_KEY_NSCameraUsageDescription = "Scan paper documents to mark up and share them.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Take photos and scan paper documents to mark up and share them.";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Use Face ID to securely unlock Magnum Field Resources.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_UIColorName = WarmBackground;
 				INFOPLIST_KEY_UILaunchScreen_UIImageName = LogoMark;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.5;
+				MARKETING_VERSION = 2.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.magnumdrywall.fieldapp.staging;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -522,25 +538,25 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Field Resources";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
-				INFOPLIST_KEY_NSCameraUsageDescription = "Scan paper documents to mark up and share them.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Take photos and scan paper documents to mark up and share them.";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Use Face ID to securely unlock Magnum Field Resources.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_UIColorName = WarmBackground;
 				INFOPLIST_KEY_UILaunchScreen_UIImageName = LogoMark;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.5;
+				MARKETING_VERSION = 2.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.magnumdrywall.fieldapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

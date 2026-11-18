@@ -36,6 +36,7 @@ struct EmployeeContact: Identifiable, Codable, Hashable {
 struct UsefulLink: Identifiable, Codable, Hashable {
     let title: String
     let url: URL
+    var logoURL: URL? = nil
     var id: String { title + "\u{001F}" + url.absoluteString }
 
     static func websiteURL(_ value: String) -> URL? {
@@ -86,7 +87,9 @@ enum SpreadsheetResources {
             guard !title.isEmpty, let url = UsefulLink.websiteURL(value) else {
                 throw SpreadsheetError.invalid("Each useful link needs a Display Name and a valid website URL. Check the spreadsheet and sync again.")
             }
-            let link = UsefulLink(title: title, url: url)
+            let logoColumn = table.columns["logo url"] ?? ""
+            let logoValue = row[logoColumn + ":url"] ?? row[logoColumn] ?? ""
+            let link = UsefulLink(title: title, url: url, logoURL: UsefulLink.websiteURL(logoValue))
             if seen.insert(link.id).inserted { links.append(link) }
         }
         return links

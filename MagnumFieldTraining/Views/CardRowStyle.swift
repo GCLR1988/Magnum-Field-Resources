@@ -23,8 +23,14 @@ struct ResourceIconTheme {
         if title.contains("directory") || title.contains("contact") || title.contains("team") {
             return theme("person.2", 0x65506F, 0x92749F)
         }
+        if title == "password reset request" {
+            return theme("key", 0x79562E, 0xAB854A)
+        }
         if title.contains("link") {
             return theme("link", 0x1D6266, 0x438B90)
+        }
+        if title == "photo markup" {
+            return theme("photo.badge.plus", 0x2D4E6B, 0x52789A)
         }
         if title.contains("scan") {
             return theme("viewfinder", 0x8B4336, 0xB96B55)

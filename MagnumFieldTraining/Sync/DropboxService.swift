@@ -107,7 +107,7 @@ enum DropboxService {
     /// Spreadsheet resources can live at the app root or within a resource folder.
     static func listResourceSpreadsheets() async throws -> [DropboxFileMetadata] {
         let entries = try await listAllEntries(path: "", recursive: true)
-        let names: Set<String> = ["company directory.xlsx", "employee directory.xlsx", "useful links.xlsx"]
+        let names: Set<String> = ["company directory.xlsx", "employee directory.xlsx", "useful links.xlsx", "password reset request.xlsx"]
         return entries.compactMap { entry in
             guard entry.tag == "file", let name = entry.name, names.contains(name.lowercased()),
                   let id = entry.id, let path = entry.path_lower, let rev = entry.rev else { return nil }

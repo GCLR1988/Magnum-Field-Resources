@@ -112,6 +112,61 @@ struct SpreadsheetStoreTests {
         #expect(cache.attempts == 8)
     }
 
+    @Test func passwordResetLinksPreserveOrderCacheAndRecoverFromFailedUpdates() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let workbookURL = directory.appendingPathComponent("reset.xlsx")
+        let snapshotURL = directory.appendingPathComponent("snapshot.json")
+        try workbook(rows: [["Display Name", "URL"],
+                            ["Second alphabetically", "https://example.com/reset"],
+                            ["First alphabetically", "https://example.org/reset"]]).write(to: workbookURL)
+        let cache = MediaCache.shared
+        cache.urls = ["reset": workbookURL]
+        cache.downloadFails = false
+        cache.attempts = 0
+        DropboxService.files = [DropboxFileMetadata(id: "reset", name: "Password Reset Request.xlsx",
+                                                   pathLower: "/reset.xlsx", rev: "1")]
+        let store = SpreadsheetStore(snapshotURL: snapshotURL)
+        await store.sync()
+        #expect(store.errorMessage == nil)
+        #expect(store.passwordResetLinks.map(\.title) == ["Second alphabetically", "First alphabetically"])
+        let restored = SpreadsheetStore(snapshotURL: snapshotURL)
+        #expect(restored.passwordResetLinks == store.passwordResetLinks)
+        await restored.sync()
+        #expect(cache.attempts == 1)
+
+        DropboxService.files = [DropboxFileMetadata(id: "reset", name: "Password Reset Request.xlsx",
+                                                   pathLower: "/reset.xlsx", rev: "2")]
+        cache.downloadFails = true
+        await restored.sync()
+        #expect(restored.errorMessage != nil)
+        #expect(restored.passwordResetLinks == store.passwordResetLinks)
+        cache.downloadFails = false
+        try workbook(rows: [["Display Name", "URL"], ["Updated", "https://example.com/new"]]).write(to: workbookURL)
+        await restored.sync()
+        #expect(restored.errorMessage == nil)
+        #expect(restored.passwordResetLinks.map(\.title) == ["Updated"])
+        DropboxService.files = []
+        await restored.sync()
+        #expect(restored.passwordResetLinks.isEmpty)
+        #expect(SpreadsheetStore(snapshotURL: snapshotURL).passwordResetLinks.isEmpty)
+    }
+
+    @Test func duplicatePasswordResetWorkbooksAreRejected() async {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: url) }
+        DropboxService.files = [
+            DropboxFileMetadata(id: "reset1", name: "Password Reset Request.xlsx", pathLower: "/reset1.xlsx", rev: "1"),
+            DropboxFileMetadata(id: "reset2", name: "PASSWORD RESET REQUEST.XLSX", pathLower: "/reset2.xlsx", rev: "1")
+        ]
+        let store = SpreadsheetStore(snapshotURL: url)
+        await store.sync()
+        #expect(store.errorMessage != nil)
+        #expect(store.passwordResetLinks.isEmpty)
+        #expect(!FileManager.default.fileExists(atPath: url.path))
+    }
+
     private func files(revision: String) -> [DropboxFileMetadata] {
         [DropboxFileMetadata(id: "directory", name: "Company Directory.xlsx", pathLower: "/directory.xlsx", rev: revision),
          DropboxFileMetadata(id: "links", name: "Useful Links.xlsx", pathLower: "/links.xlsx", rev: revision)]

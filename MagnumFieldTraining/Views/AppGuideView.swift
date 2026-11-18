@@ -55,7 +55,7 @@ private struct AppBasicsGuideSection: View {
     var body: some View {
         Section("Everyday shortcuts") {
             AppGuideTip(title: "Find and bookmark resources", symbol: "bookmark",
-                        detail: "Use Home search to find names and text inside downloaded PDFs. Filter by forms, videos, guides, or downloaded files. Tap a content result to open its matching page. Scanned PDFs without a text layer cannot be searched. Touch and hold a resource to bookmark it.")
+                        detail: "Open a resource folder from Home to browse its files. Touch and hold a resource to bookmark it, then find it in Bookmarked on Home. Use the magnifying glass inside a PDF to search its text. Scanned PDFs without a text layer cannot be searched.")
             AppGuideTip(title: "Use the Company Directory", symbol: "person.crop.rectangle",
                         detail: "Search by name, email, or phone number. Tap a phone number to call or an email address to write a message. Use the small person-plus button on the right to review and save someone to Apple Contacts.")
             AppGuideTip(title: "Scan paper documents", symbol: "doc.viewfinder",

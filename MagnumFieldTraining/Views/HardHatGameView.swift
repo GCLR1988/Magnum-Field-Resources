@@ -8,30 +8,28 @@ final class HardHatStatus {
     var phase: HardHatGame.Phase = .ready
     var score = 0
     var runID = UUID()
+    var newBest = false
+    var celebration = 0
 }
 
 struct HardHatGameView: View {
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @AppStorage("HardHatHop.sound") private var sound = true
+    @AppStorage("HardHatHop.haptics") private var haptics = true
     @State private var scene = HardHatScene()
     @State private var scores = HardHatScores()
     @State private var name = ""
     @State private var saved = false
     @State private var showingScores = false
+    @State private var latestSavedID: UUID?
 
     var body: some View {
         VStack(spacing: 12) {
-            HStack {
-                Label("\(scene.status.score)", systemImage: "flag.checkered")
-                    .accessibilityLabel("Score: \(scene.status.score)")
-                Spacer()
-                Label("Best: \(scores.best)", systemImage: "trophy.fill")
-                    .foregroundStyle(AppStyle.accent)
-            }
-            .font(.headline.monospacedDigit())
-            .padding(.horizontal)
-
+            HardHatScoreBar(score: scene.status.score, best: max(scores.best, scene.status.score),
+                            newBest: scene.status.newBest)
             GeometryReader { geometry in
-                SpriteView(scene: scene, isPaused: scene.status.phase == .paused || scene.status.phase == .ended || scenePhase != .active)
+                HardHatRenderView(scene: scene, isPaused: scene.status.phase == .paused || scene.status.phase == .ended || scenePhase != .active)
                     .aspectRatio(390.0 / 640.0, contentMode: .fit)
                     .frame(width: geometry.size.width, height: geometry.size.height)
                     .accessibilityLabel("Hard Hat Hop play area")
@@ -39,23 +37,29 @@ struct HardHatGameView: View {
                     .accessibilityAddTraits(.isButton)
                     .accessibilityAction { scene.flap() }
             }
+            .background(AppStyle.charcoal)
+            .overlay(alignment: .top) {
+                HardHatCelebration(status: scene.status)
+                    .allowsHitTesting(false)
+            }
             .overlay {
                 if scene.status.phase == .paused || scene.status.phase == .ended {
                     ScrollView {
-                        gameMenu
+                        HardHatGameMenu(phase: scene.status.phase, score: scene.status.score,
+                                        newBest: scene.status.newBest, name: $name, saved: saved,
+                                        resume: scene.resumeGame, restart: start, save: saveScore)
                             .padding(20)
-                            .frame(maxWidth: 340)
+                            .frame(maxWidth: 380)
                             .frame(maxWidth: .infinity)
                     }
                     .defaultScrollAnchor(.center)
-                    .background(.black.opacity(0.20))
+                    .background(AppStyle.charcoal.opacity(0.40))
                 }
             }
-            .clipShape(RoundedRectangle(cornerRadius: AppStyle.cornerRadius))
+            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .overlay { RoundedRectangle(cornerRadius: 20).strokeBorder(AppStyle.brand.opacity(0.25)) }
 
-            Text("Tap to fly. Dodge the scaffolding.")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
+            HardHatControls(sound: $sound, haptics: $haptics)
         }
         .padding(16)
         .background(AppStyle.background)
@@ -73,63 +77,197 @@ struct HardHatGameView: View {
             }
         }
         .sheet(isPresented: $showingScores) {
-            NavigationStack {
-                List {
-                    Section {
-                        Label("Best: \(scores.best)", systemImage: "trophy.fill")
-                            .font(.headline)
-                            .foregroundStyle(AppStyle.accent)
-                        ForEach(scores.entries) { entry in
-                            HStack {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(entry.name).font(.headline)
-                                    Text(entry.date, format: .dateTime.month().day().year())
-                                        .font(.caption).foregroundStyle(.secondary)
-                                }
-                                Spacer()
-                                Text(entry.score, format: .number)
-                                    .font(.title3.bold().monospacedDigit())
-                            }
-                        }
-                        if scores.entries.isEmpty {
-                            Text("Finish a run and save your name to join the leaderboard.")
-                                .foregroundStyle(.secondary)
-                        }
-                    } footer: {
-                        Text("Top 10 scores on this device. Your best score is saved automatically.")
-                    }
-                }
-                .navigationTitle("Site Legends")
-                .toolbar {
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("Done") { showingScores = false }
-                    }
-                }
-            }
+            HardHatLeaderboard(scores: scores, latestID: latestSavedID)
         }
+        .onAppear { configure() }
+        .onChange(of: sound) { _, _ in configure() }
+        .onChange(of: haptics) { _, _ in configure() }
+        .onChange(of: reduceMotion) { _, _ in configure() }
         .onChange(of: scene.status.phase) { _, phase in
             if phase == .ended { scores.recordBest(scene.status.score) }
         }
         .onChange(of: scenePhase) { _, phase in
             if phase != .active { scene.pauseGame() }
         }
-        .onDisappear { scene.pauseGame() }
+        .onDisappear {
+            scene.pauseGame()
+            scene.feedback.stop()
+        }
     }
 
-    @ViewBuilder
-    private var gameMenu: some View {
+    private func configure() {
+        scene.configure(sound: sound, haptics: haptics, reduceMotion: reduceMotion, best: scores.best)
+    }
+
+    private func start() {
+        saved = false
+        scene.recordToBeat = scores.best
+        scene.startGame()
+    }
+
+    private func saveScore() {
+        guard !saved, !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        scores.save(name: name, score: scene.status.score, runID: scene.status.runID)
+        latestSavedID = scene.status.runID
+        saved = true
+    }
+}
+
+/// Keep the renderer's pause state synchronized on every SwiftUI update,
+/// including a restart that reuses the existing scene.
+private struct HardHatRenderView: UIViewRepresentable {
+    let scene: HardHatScene
+    let isPaused: Bool
+
+    func makeUIView(context: Context) -> SKView {
+        let view = SKView()
+        view.presentScene(scene)
+        view.isPaused = isPaused
+        scene.isPaused = isPaused
+        return view
+    }
+
+    func updateUIView(_ view: SKView, context: Context) {
+        if view.scene !== scene { view.presentScene(scene) }
+        scene.isPaused = isPaused
+        view.isPaused = isPaused
+    }
+
+    static func dismantleUIView(_ view: SKView, coordinator: ()) {
+        view.isPaused = true
+        view.presentScene(nil)
+    }
+}
+
+private struct HardHatScoreBar: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    let score: Int
+    let best: Int
+    let newBest: Bool
+
+    var body: some View {
+        HStack(spacing: 16) {
+            VStack(alignment: .leading, spacing: 3) {
+                Label("Score", systemImage: "flag.checkered")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.white.opacity(0.8))
+                Text(score, format: .number)
+                    .font(.system(.largeTitle, design: .rounded, weight: .bold).monospacedDigit())
+                    .contentTransition(.numericText())
+                    .animation(reduceMotion ? nil : .snappy(duration: 0.22), value: score)
+                    .keyframeAnimator(initialValue: CGFloat(1), trigger: score) { [reduceMotion] content, scale in
+                        content.scaleEffect(reduceMotion ? 1 : scale)
+                    } keyframes: { _ in
+                        LinearKeyframe(1.12, duration: 0.1)
+                        SpringKeyframe(1, duration: 0.2)
+                    }
+            }
+            Spacer(minLength: 8)
+            VStack(alignment: .trailing, spacing: 5) {
+                Label(newBest ? "New Best!" : "Personal Best", systemImage: "trophy.fill")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(Color(red: 1, green: 0.83, blue: 0.42))
+                Text(best, format: .number)
+                    .font(.system(.title2, design: .rounded, weight: .bold).monospacedDigit())
+            }
+        }
+        .foregroundStyle(.white)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
+        .background(LinearGradient(colors: [AppStyle.brand, AppStyle.brand.opacity(0.86)],
+                                   startPoint: .topLeading, endPoint: .bottomTrailing),
+                    in: RoundedRectangle(cornerRadius: 18))
+        .accessibilityElement(children: .combine)
+    }
+}
+
+private struct HardHatControls: View {
+    @Binding var sound: Bool
+    @Binding var haptics: Bool
+
+    var body: some View {
+        VStack(spacing: 8) {
+            HStack(spacing: 12) {
+                Toggle(isOn: $sound) {
+                    Label("Sound", systemImage: sound ? "speaker.wave.2.fill" : "speaker.slash.fill")
+                }
+                Toggle(isOn: $haptics) {
+                    Label("Haptics", systemImage: "hand.tap.fill")
+                }
+            }
+            .toggleStyle(.button)
+            .buttonStyle(.bordered)
+            .tint(AppStyle.accent)
+            .font(.subheadline)
+            Text("Tap to fly. Dodge the scaffolding.")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+    }
+}
+
+private struct HardHatCelebration: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    let status: HardHatStatus
+    @State private var visible = false
+
+    var body: some View {
+        Group {
+            if visible && status.phase == .playing {
+                Label(status.newBest ? "New Best!" : "Keep Flying!", systemImage: "sparkles")
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 10)
+                    .background(AppStyle.brand, in: Capsule())
+                    .padding(12)
+                    .transition(.opacity)
+            }
+        }
+        .task(id: status.celebration) {
+            guard status.celebration > 0 else { return }
+            withAnimation(reduceMotion ? nil : .easeOut(duration: 0.18)) { visible = true }
+            do { try await Task.sleep(for: .seconds(1.4)) } catch { return }
+            withAnimation(reduceMotion ? nil : .easeOut(duration: 0.2)) { visible = false }
+        }
+    }
+}
+
+private struct HardHatGameMenu: View {
+    let phase: HardHatGame.Phase
+    let score: Int
+    let newBest: Bool
+    @Binding var name: String
+    let saved: Bool
+    let resume: () -> Void
+    let restart: () -> Void
+    let save: () -> Void
+
+    var body: some View {
         VStack(spacing: 16) {
-            Image(systemName: scene.status.phase == .ended ? "cone.fill" : "hammer.fill")
-                .font(.largeTitle)
+            Image(systemName: phase == .paused ? "pause.circle.fill" : (newBest ? "trophy.fill" : "cone.fill"))
+                .font(.system(size: 42))
                 .foregroundStyle(AppStyle.accent)
-            if scene.status.phase == .paused {
-                Text("On Break").font(.title2.bold())
-                Button("Resume") { scene.resumeGame() }
+                .accessibilityHidden(true)
+            Text(phase == .paused ? "On Break" : "Site Closed!")
+                .font(.system(.title, design: .rounded, weight: .bold))
+            if phase == .paused {
+                Text("Ready for another lift?")
+                    .font(.subheadline).foregroundStyle(.secondary)
+                Button("Resume", systemImage: "play.fill", action: resume)
                     .buttonStyle(.borderedProminent)
             } else {
-                Text("Site Closed!").font(.title2.bold())
-                Text("Score: \(scene.status.score)")
-                    .font(.title3.monospacedDigit())
+                VStack(spacing: 4) {
+                    Text(score, format: .number)
+                        .font(.system(.largeTitle, design: .rounded, weight: .bold).monospacedDigit())
+                    Text(newBest ? "New Personal Best" : "Final Score")
+                        .font(.caption.weight(.semibold)).foregroundStyle(.secondary)
+                }
+                .accessibilityElement(children: .combine)
+                Button("Try Again", systemImage: "arrow.clockwise", action: restart)
+                    .buttonStyle(.borderedProminent)
+                Divider()
                 TextField("Your name", text: $name)
                     .textFieldStyle(.roundedBorder)
                     .textInputAutocapitalization(.words)
@@ -137,169 +275,90 @@ struct HardHatGameView: View {
                     .submitLabel(.done)
                     .disabled(saved)
                     .onChange(of: name) { _, value in name = String(value.prefix(24)) }
-                    .onSubmit { saveScore() }
-                Button(saved ? "Score Saved" : "Save Score") { saveScore() }
+                    .onSubmit(save)
+                Button(saved ? "Score Saved" : "Save Score", systemImage: saved ? "checkmark.circle.fill" : "trophy", action: save)
                     .buttonStyle(.bordered)
                     .disabled(saved || name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                Button("Try Again") { start() }
-                    .buttonStyle(.borderedProminent)
             }
         }
+        .controlSize(.large)
         .tint(AppStyle.accent)
         .padding(24)
         .frame(maxWidth: .infinity)
-        .trainingCard()
-    }
-
-    private func start() {
-        saved = false
-        scene.startGame()
-    }
-
-    private func saveScore() {
-        guard !saved, !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
-        scores.save(name: name, score: scene.status.score, runID: scene.status.runID)
-        saved = true
+        .background(AppStyle.surface, in: RoundedRectangle(cornerRadius: 24))
+        .overlay { RoundedRectangle(cornerRadius: 24).strokeBorder(AppStyle.brand.opacity(0.18)) }
+        .shadow(color: .black.opacity(0.18), radius: 20, y: 8)
     }
 }
 
-/// SpriteKit handles drawing and touches; the independent model owns the game rules.
-final class HardHatScene: SKScene {
-    let status = HardHatStatus()
-    private var game = HardHatGame()
-    private let drone = SKNode()
-    private let obstacles = SKNode()
-    private var gateNodes: [Int: SKNode] = [:]
-    private var previousTime: TimeInterval?
+private struct HardHatLeaderboard: View {
+    @Environment(\.dismiss) private var dismiss
+    let scores: HardHatScores
+    let latestID: UUID?
 
-    override init() {
-        super.init(size: CGSize(width: HardHatGame.width, height: HardHatGame.height))
-        scaleMode = .aspectFit
-        backgroundColor = UIColor(red: 0.78, green: 0.88, blue: 0.91, alpha: 1)
-        buildSite()
-    }
-
-    required init?(coder: NSCoder) { nil }
-
-    override func didMove(to view: SKView) {
-        // Start when the playfield is presented, not while navigation creates the view.
-        if status.phase == .ready { startGame() }
-    }
-
-    func startGame() {
-        game.start()
-        status.runID = UUID()
-        status.score = 0
-        status.phase = .playing
-        obstacles.removeAllChildren()
-        gateNodes.removeAll()
-        previousTime = nil
-        drone.position = CGPoint(x: HardHatGame.playerX, y: game.y)
-    }
-
-    func flap() { game.flap() }
-    func pauseGame() {
-        game.pause()
-        status.phase = game.phase
-        previousTime = nil
-    }
-    func resumeGame() {
-        game.resume()
-        status.phase = game.phase
-        previousTime = nil
-    }
-
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) { flap() }
-
-    override func update(_ currentTime: TimeInterval) {
-        defer { previousTime = currentTime }
-        guard let previousTime else { return }
-        game.advance(currentTime - previousTime)
-        drone.position = CGPoint(x: HardHatGame.playerX, y: game.y)
-        drone.zRotation = max(-0.5, min(0.35, game.velocity / 650))
-        for gate in game.gates {
-            if gateNodes[gate.id] == nil {
-                let node = SKNode()
-                addScaffold(to: node, bottom: HardHatGame.floor, top: gate.center - gate.gap / 2)
-                addScaffold(to: node, bottom: gate.center + gate.gap / 2, top: HardHatGame.height)
-                obstacles.addChild(node)
-                gateNodes[gate.id] = node
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 16) {
+                    HardHatScoreBar(score: scores.best, best: scores.best, newBest: false)
+                    ForEach(Array(scores.entries.enumerated()), id: \.element.id) { index, entry in
+                        HardHatLeaderboardRow(entry: entry, rank: index + 1, latest: entry.id == latestID)
+                    }
+                    if scores.entries.isEmpty {
+                        ContentUnavailableView("Your spot is waiting", systemImage: "trophy",
+                            description: Text("Finish a run and save your name to join the leaderboard."))
+                    }
+                    Text("Top 10 scores on this device. Your best score is saved automatically.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+                .padding(20)
             }
-            gateNodes[gate.id]?.position.x = gate.x
-        }
-        let ids = Set(game.gates.map(\.id))
-        for id in Array(gateNodes.keys) where !ids.contains(id) {
-            gateNodes.removeValue(forKey: id)?.removeFromParent()
-        }
-        if status.score != game.score { status.score = game.score }
-        if status.phase != game.phase { status.phase = game.phase }
-    }
-
-    private func rectangle(_ rect: CGRect, color: UIColor, parent: SKNode) {
-        let node = SKShapeNode(rect: rect, cornerRadius: 2)
-        node.fillColor = color
-        node.strokeColor = .clear
-        parent.addChild(node)
-    }
-
-    private func line(from start: CGPoint, to end: CGPoint, color: UIColor, width: CGFloat, parent: SKNode) {
-        let path = CGMutablePath()
-        path.move(to: start)
-        path.addLine(to: end)
-        let node = SKShapeNode(path: path)
-        node.strokeColor = color
-        node.lineWidth = width
-        parent.addChild(node)
-    }
-
-    private func buildSite() {
-        let distant = UIColor(red: 0.45, green: 0.62, blue: 0.67, alpha: 0.35)
-        for x in stride(from: 15, through: 370, by: 65) {
-            let height = CGFloat(75 + (x * 7) % 105)
-            rectangle(CGRect(x: CGFloat(x), y: 48, width: 45, height: height), color: distant, parent: self)
-        }
-        line(from: CGPoint(x: 280, y: 80), to: CGPoint(x: 280, y: 510), color: distant, width: 8, parent: self)
-        line(from: CGPoint(x: 190, y: 495), to: CGPoint(x: 370, y: 495), color: distant, width: 7, parent: self)
-        line(from: CGPoint(x: 210, y: 495), to: CGPoint(x: 280, y: 540), color: distant, width: 3, parent: self)
-        line(from: CGPoint(x: 280, y: 540), to: CGPoint(x: 360, y: 495), color: distant, width: 3, parent: self)
-        line(from: CGPoint(x: 340, y: 495), to: CGPoint(x: 340, y: 370), color: distant, width: 2, parent: self)
-        addChild(obstacles)
-        rectangle(CGRect(x: 0, y: 0, width: 390, height: 48),
-                  color: UIColor(red: 0.22, green: 0.25, blue: 0.28, alpha: 1), parent: self)
-        for x in stride(from: 0, to: 390, by: 32) {
-            rectangle(CGRect(x: x, y: 38, width: 18, height: 8), color: .systemYellow, parent: self)
-        }
-        drone.zPosition = 10
-        let helmet = SKShapeNode(ellipseOf: CGSize(width: 34, height: 28))
-        helmet.fillColor = .systemYellow
-        helmet.strokeColor = UIColor(red: 0.65, green: 0.35, blue: 0.04, alpha: 1)
-        helmet.lineWidth = 2
-        drone.addChild(helmet)
-        rectangle(CGRect(x: -21, y: -10, width: 42, height: 6), color: .systemOrange, parent: drone)
-        rectangle(CGRect(x: -3, y: 1, width: 6, height: 12), color: .white.withAlphaComponent(0.65), parent: drone)
-        line(from: CGPoint(x: -25, y: 18), to: CGPoint(x: 25, y: 18), color: .darkGray, width: 3, parent: drone)
-        line(from: CGPoint(x: 0, y: 14), to: CGPoint(x: 0, y: 20), color: .darkGray, width: 3, parent: drone)
-        drone.position = CGPoint(x: HardHatGame.playerX, y: game.y)
-        addChild(drone)
-    }
-
-    private func addScaffold(to parent: SKNode, bottom: Double, top: Double) {
-        let steel = UIColor(red: 0.25, green: 0.31, blue: 0.35, alpha: 1)
-        rectangle(CGRect(x: 0, y: bottom, width: 58, height: top - bottom),
-                  color: UIColor(red: 0.94, green: 0.57, blue: 0.17, alpha: 1), parent: parent)
-        for x in [5.0, 49.0] {
-            rectangle(CGRect(x: x, y: bottom, width: 4, height: top - bottom), color: steel, parent: parent)
-        }
-        for y in stride(from: bottom + 8, to: top - 8, by: 34) {
-            line(from: CGPoint(x: 9, y: y), to: CGPoint(x: 49, y: min(y + 28, top - 4)),
-                 color: steel.withAlphaComponent(0.6), width: 3, parent: parent)
-        }
-        for y in [bottom, top - 9] {
-            rectangle(CGRect(x: 0, y: y, width: 58, height: 9), color: steel, parent: parent)
-            for x in stride(from: 3, to: 58, by: 16) {
-                rectangle(CGRect(x: Double(x), y: y + 2, width: 8, height: 5), color: .systemYellow, parent: parent)
+            .background(AppStyle.background)
+            .navigationTitle("Site Legends")
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } }
             }
         }
+    }
+}
+
+private struct HardHatLeaderboardRow: View {
+    let entry: HardHatScores.Entry
+    let rank: Int
+    let latest: Bool
+
+    var body: some View {
+        HStack(spacing: 14) {
+            ZStack {
+                Circle().fill(rank <= 3 ? AppStyle.brand : Color.secondary.opacity(0.12))
+                if rank <= 3 {
+                    Image(systemName: "medal.fill")
+                        .foregroundStyle(rank == 1 ? Color.yellow : (rank == 2 ? Color.white : Color.orange))
+                }
+                Text(rank, format: .number)
+                    .font(.caption2.bold())
+                    .foregroundStyle(rank <= 3 ? .white : .primary)
+                    .offset(y: rank <= 3 ? 15 : 0)
+            }
+            .frame(width: 46, height: 46)
+            .accessibilityLabel("Rank: \(rank)")
+            VStack(alignment: .leading, spacing: 4) {
+                Text(entry.name).font(.headline)
+                Text(entry.date, format: .dateTime.month().day().year())
+                    .font(.caption).foregroundStyle(.secondary)
+                if latest {
+                    Text("Latest Entry").font(.caption.weight(.semibold)).foregroundStyle(AppStyle.accent)
+                }
+            }
+            Spacer(minLength: 4)
+            Text(entry.score, format: .number)
+                .font(.system(.title2, design: .rounded, weight: .bold).monospacedDigit())
+        }
+        .padding(16)
+        .background(AppStyle.surface, in: RoundedRectangle(cornerRadius: 16))
+        .overlay { RoundedRectangle(cornerRadius: 16).strokeBorder(latest ? AppStyle.accent : AppStyle.border, lineWidth: latest ? 2 : 1) }
+        .accessibilityElement(children: .combine)
     }
 }
 

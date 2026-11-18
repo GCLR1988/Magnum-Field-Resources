@@ -3,6 +3,28 @@ import PDFKit
 import Testing
 @testable import FormLibrary
 
+@Test @MainActor
+func generatedSafetyFieldNamesUseReadableFallbacks() {
+    for identifier in ["newTxtJobName00", "newTxtJobName10", "newTxtSpecialTopics00", "f1_2"] {
+        let annotation = PDFAnnotation(bounds: .zero, forType: .widget, withProperties: nil)
+        annotation.widgetFieldType = .text
+        annotation.fieldName = identifier
+        let field = FormField(id: "0:2", pageIndex: 0, annotation: annotation)
+        #expect(field.name == AppLanguage.string("Field \(3)"))
+        annotation.setValue(identifier, forAnnotationKey: .widgetTextLabelUI)
+        #expect(field.name == AppLanguage.string("Field \(3)"))
+        annotation.setValue("Job name / Nombre del trabajo", forAnnotationKey: .widgetTextLabelUI)
+        #expect(field.name == "Job name / Nombre del trabajo")
+        #expect(annotation.fieldName == identifier)
+    }
+    let annotation = PDFAnnotation(bounds: .zero, forType: .widget, withProperties: nil)
+    annotation.fieldName = "OSHA_300"
+    #expect(FormField(id: "0:0", pageIndex: 0, annotation: annotation).name == "OSHA 300")
+    annotation.widgetFieldType = .text
+    annotation.fieldName = "newTxtMeetingDate00"
+    #expect(FormField(id: "0:0", pageIndex: 0, annotation: annotation).isDate)
+}
+
 @MainActor
 private func makeForm() -> PDFDocument {
     let document = PDFDocument()

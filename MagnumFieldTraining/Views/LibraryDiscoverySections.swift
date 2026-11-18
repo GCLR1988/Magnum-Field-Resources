@@ -9,8 +9,10 @@ private enum LibraryEntry: Identifiable {
     case device(AppleDevice)
     case microsoft(MicrosoftTrainingApp)
     case directory
+    case passwordReset
     case links
     case scan
+    case photoMarkup
 
     var id: String {
         switch self {
@@ -23,7 +25,9 @@ private enum LibraryEntry: Identifiable {
         case .device(let device): BookmarkKey.device(device.id)
         case .microsoft(let app): BookmarkKey.microsoft(app.id)
         case .directory: BookmarkKey.directory
+        case .passwordReset: BookmarkKey.passwordReset
         case .links: BookmarkKey.links
+        case .photoMarkup: BookmarkKey.photoMarkup
         case .scan: BookmarkKey.scan
         }
     }
@@ -41,7 +45,9 @@ private enum LibraryEntry: Identifiable {
         case .device(let device): device.rawValue.localizedStandardContains(query)
         case .microsoft(let app): app.rawValue.localizedStandardContains(query)
         case .directory: AppLanguage.string("Company Directory").localizedStandardContains(query)
+        case .passwordReset: AppLanguage.string("Password Reset Request").localizedStandardContains(query)
         case .links: AppLanguage.string("Useful Links").localizedStandardContains(query)
+        case .photoMarkup: AppLanguage.string("Photo Markup").localizedStandardContains(query)
         case .scan: AppLanguage.string("Scan & Send").localizedStandardContains(query)
         }
     }
@@ -106,6 +112,7 @@ struct LibraryDiscoverySections: View {
             appendFolders(catalogStore.rootFolder(for: program).subfolders, program: program)
         }
         result += resources.contacts.map { .contact($0) }
+        result += resources.passwordResetLinks.map { .link($0) }
         result += resources.links.map { .link($0) }
         if !resources.hasLinks, let url = URL(string: "https://magnum.promotionaledgeshop.com") {
             result.append(.link(UsefulLink(title: AppLanguage.string("Magnum Swag Store"), url: url)))
@@ -113,7 +120,7 @@ struct LibraryDiscoverySections: View {
         result += AppleDevice.allCases.map { .device($0) }
         result += MicrosoftTrainingApp.allCases.map { .microsoft($0) }
         if resources.hasDirectory { result.append(.directory) }
-        result += [.links, .scan]
+        result += [.passwordReset, .links, .scan, .photoMarkup]
         // A URL or document can occur in more than one source.
         var seen = Set<String>()
         return result.filter { seen.insert($0.id).inserted }
@@ -239,12 +246,26 @@ private struct LibraryEntryRow: View {
                     Label("Company Directory", systemImage: "person.crop.rectangle")
                 }
                 .bookmarkAction(entry.id)
+            case .passwordReset:
+                NavigationLink {
+                    PasswordResetRequestView()
+                } label: {
+                    Label("Password Reset Request", systemImage: "key")
+                }
+                .bookmarkAction(entry.id)
             case .links:
                 NavigationLink {
                     List { UsefulLinksSection() }
                         .navigationTitle("Useful Links")
                 } label: {
                     Label("Useful Links", systemImage: "link")
+                }
+                .bookmarkAction(entry.id)
+            case .photoMarkup:
+                NavigationLink {
+                    PhotoMarkupView()
+                } label: {
+                    Label("Photo Markup", systemImage: "photo.badge.plus")
                 }
                 .bookmarkAction(entry.id)
             case .scan:

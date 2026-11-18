@@ -121,7 +121,8 @@ struct WalkthroughDetailView: View {
                     Button {
                         withAnimation { showThumbnails.toggle() }
                     } label: {
-                        Image(systemName: "square.grid.2x2")
+                        Label("Page Thumbnails", systemImage: "square.grid.2x2")
+                            .labelStyle(.iconOnly)
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
@@ -136,7 +137,8 @@ struct WalkthroughDetailView: View {
                             }
                         }
                     } label: {
-                        Image(systemName: "magnifyingglass")
+                        Label("Search this document", systemImage: "magnifyingglass")
+                            .labelStyle(.iconOnly)
                     }
                 }
             }
@@ -169,13 +171,15 @@ struct WalkthroughDetailView: View {
                     Button {
                         goToPreviousResult()
                     } label: {
-                        Image(systemName: "chevron.up")
+                        Label("Previous Search Result", systemImage: "chevron.up")
+                            .labelStyle(.iconOnly)
                     }
                     .disabled(searchResults.isEmpty)
                     Button {
                         goToNextResult()
                     } label: {
-                        Image(systemName: "chevron.down")
+                        Label("Next Search Result", systemImage: "chevron.down")
+                            .labelStyle(.iconOnly)
                     }
                     .disabled(searchResults.isEmpty)
                 }

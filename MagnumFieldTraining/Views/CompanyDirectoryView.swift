@@ -198,13 +198,145 @@ struct CompanyDirectoryRow: View {
     }
 }
 
+private struct SpreadsheetLinkLogo: View {
+    @EnvironmentObject private var catalogStore: CatalogStore
+    let link: UsefulLink
+
+    private var isBusyBusy: Bool {
+        let words = link.title.lowercased().split { !$0.isLetter && !$0.isNumber }
+        let host = link.url.host?.lowercased() ?? ""
+        return words.contains("busybusy")
+            || zip(words, words.dropFirst()).contains { $0 == "busy" && $1 == "busy" }
+            || host == "busybusy.com" || host.hasSuffix(".busybusy.com")
+    }
+
+    private var isClearstory: Bool {
+        let words = link.title.lowercased().split { !$0.isLetter && !$0.isNumber }
+        let host = link.url.host?.lowercased() ?? ""
+        return words.contains("clearstory")
+            || host == "clearstory.build" || host.hasSuffix(".clearstory.build")
+    }
+
+    private var bundledColorLogo: String? {
+        let words = Set(link.title.lowercased().split { !$0.isLetter && !$0.isNumber }.map(String.init))
+        let host = link.url.host?.lowercased() ?? ""
+        func matchesDomain(_ domain: String) -> Bool {
+            host == domain || host.hasSuffix("." + domain)
+        }
+        if !words.isDisjoint(with: ["microsoft", "office", "outlook", "m365", "o365"])
+            || ["microsoft.com", "microsoftonline.com", "office.com", "office365.com", "live.com", "outlook.com"].contains(where: matchesDomain) {
+            return "MicrosoftLinkLogo"
+        }
+        if !words.isDisjoint(with: ["acc", "forma", "autodesk"])
+            || matchesDomain("autodesk.com") {
+            return "ACCFormaLogo"
+        }
+        return nil
+    }
+
+    private var existingLogo: UIImage? {
+        // Match complete words so similar company names don't borrow each other's artwork.
+        let titleWords = link.title.lowercased().split { !$0.isLetter && !$0.isNumber }
+        let matches = catalogStore.programs.filter { program in
+            let nameWords = program.name.lowercased().split { !$0.isLetter && !$0.isNumber }
+            guard !nameWords.isEmpty, titleWords.count >= nameWords.count else { return false }
+            return (0...(titleWords.count - nameWords.count)).contains { start in
+                Array(titleWords[start..<(start + nameWords.count)]) == nameWords
+            }
+        }
+        guard matches.count == 1, let program = matches.first,
+              let file = catalogStore.logo(for: program) else { return nil }
+        return LogoImageCache.shared.image(for: file)
+    }
+
+    private var websiteIconURL: URL? {
+        // Request only the site's icon; never include a reset path, query, or token.
+        guard let host = link.url.host else { return nil }
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = host
+        components.path = "/favicon.ico"
+        return components.url
+    }
+
+    var body: some View {
+        let _ = catalogStore.cacheVersion
+        ZStack {
+            if isBusyBusy {
+                Image("BusyBusyLogo")
+                    .renderingMode(.original)
+                    .resizable()
+                    .scaledToFit()
+            } else if isClearstory {
+                Image("ClearstoryLogo")
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundStyle(Color(red: 0, green: 0.8, blue: 0))
+            } else if let asset = bundledColorLogo {
+                Image(asset)
+                    .resizable()
+                    .scaledToFit()
+            } else {
+                RoundedRectangle(cornerRadius: 6).fill(Color.white)
+            }
+            if isBusyBusy || isClearstory || bundledColorLogo != nil {
+                // Bundled artwork remains available offline.
+            } else if link.logoURL == nil, let image = existingLogo {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFit()
+                    .padding(3)
+            } else {
+                AsyncImage(url: link.logoURL ?? websiteIconURL) { phase in
+                    if let image = phase.image {
+                        image.resizable().scaledToFit().padding(3)
+                    } else {
+                        ResourceFolderIcon(name: link.title + " link", compact: true)
+                    }
+                }
+            }
+        }
+        .frame(width: 32, height: 32)
+        .clipShape(RoundedRectangle(cornerRadius: 6))
+        .accessibilityHidden(true)
+    }
+}
+
+struct PasswordResetBubble: View {
+    let link: UsefulLink
+
+    var body: some View {
+        Link(destination: link.url) {
+            HStack(spacing: 14) {
+                SpreadsheetLinkLogo(link: link)
+                    .accessibilityHidden(true)
+                Text(link.title)
+                    .font(.headline)
+                    .foregroundStyle(.primary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(.horizontal, 28)
+            .padding(.vertical, 18)
+            .frame(maxWidth: .infinity, minHeight: 76)
+            .background(AppStyle.surface, in: Capsule())
+            .overlay { Capsule().strokeBorder(AppStyle.brand.opacity(0.22)) }
+            .shadow(color: AppStyle.brand.opacity(0.08), radius: 8, y: 4)
+            .contentShape(Capsule())
+        }
+        .buttonStyle(.plain)
+        .accessibilityHint("Opens this link")
+        .bookmarkAction(BookmarkKey.link(link.url))
+    }
+}
+
 struct SpreadsheetLinkRow: View {
     let link: UsefulLink
 
     var body: some View {
         Link(destination: link.url) {
             HStack(spacing: 12) {
-                ResourceFolderIcon(name: link.title + " link", compact: true)
+                SpreadsheetLinkLogo(link: link)
                 Text(link.title)
                     .foregroundStyle(.primary)
                     .frame(maxWidth: .infinity, alignment: .leading)

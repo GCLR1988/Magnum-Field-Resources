@@ -10,7 +10,6 @@ struct FormAssistantView: View {
     let onLocate: (FormField) -> Void
     let onShare: () -> Void
     @Environment(\.dismiss) private var dismiss
-    @State private var selectedIndex = 0
     @State private var revision = 0
     @State private var selectedDates = Set<String>()
     @State private var showDates = false
@@ -26,7 +25,7 @@ struct FormAssistantView: View {
                     if reviewing {
                         Section {
                             Label("Review dates, names, and signatures before sharing.", systemImage: "checklist")
-                            Text("Required-field checks use the information supplied by this PDF. Review the form itself for any other requirements.")
+                            Text("Check each page too. Some required information may not be marked here.")
                                 .font(.caption).foregroundStyle(.secondary)
                         }
                         let missing = fields.filter(\.isMissing)
@@ -34,8 +33,7 @@ struct FormAssistantView: View {
                             Section("Required fields to review") {
                                 ForEach(missing) { field in
                                     Button {
-                                        selectedIndex = fields.firstIndex(where: { $0.id == field.id }) ?? 0
-                                        withAnimation { proxy.scrollTo("field-editor", anchor: .top) }
+                                        withAnimation { proxy.scrollTo(field.id, anchor: .top) }
                                     } label: {
                                         Label(field.name, systemImage: "exclamationmark.circle")
                                             .foregroundStyle(.red)
@@ -51,46 +49,40 @@ struct FormAssistantView: View {
                         }
                     } else {
                         if startsWithDates { dateSection }
-                        Section("Form Fields") {
-                            Picker("Field", selection: $selectedIndex) {
-                                ForEach(Array(fields.enumerated()), id: \.element.id) { index, field in
-                                    Text(field.name).tag(index)
-                                }
-                            }
-                            if fields.indices.contains(selectedIndex) {
-                                let field = fields[selectedIndex]
-                                VStack(alignment: .leading, spacing: 12) {
-                                    Text(field.name).font(.headline)
-                                    Text("Page \(field.pageIndex + 1)")
-                                        .font(.caption).foregroundStyle(.secondary)
-                                    if field.isRequired {
-                                        Label(field.isMissing ? "Required — not filled in" : "Required",
-                                              systemImage: field.isMissing ? "exclamationmark.circle" : "info.circle")
-                                            .font(.caption).foregroundStyle(field.isMissing ? Color.red : Color.secondary)
+                        Section {
+                            Text("Fill in the details below. Changes appear on your form as you type.")
+                                .font(.subheadline).foregroundStyle(.secondary)
+                        }
+                        ForEach(0..<document.pageCount, id: \.self) { pageIndex in
+                            let pageFields = fields.filter { $0.pageIndex == pageIndex }
+                            if !pageFields.isEmpty {
+                                Section("Page \(pageIndex + 1)") {
+                                    ForEach(pageFields) { field in
+                                        VStack(alignment: .leading, spacing: 10) {
+                                            Text(field.name).font(.headline)
+                                            if field.isRequired {
+                                                Text(field.isMissing ? "Required — please complete" : "Required")
+                                                    .font(.caption)
+                                                    .foregroundStyle(field.isMissing ? Color.red : Color.secondary)
+                                            }
+                                            fieldControl(field)
+                                            Button("Show on Form", systemImage: "doc.text.magnifyingglass") {
+                                                onLocate(field)
+                                                dismiss()
+                                            }
+                                            .font(.subheadline)
+                                        }
+                                        .padding(.vertical, 6)
+                                        .id(field.id)
                                     }
-                                    fieldControl(field)
-                                    Button("View on Form", systemImage: "doc.text.magnifyingglass") {
-                                        onLocate(field)
-                                        dismiss()
-                                    }
                                 }
-                                .padding(.vertical, 8)
-                                HStack {
-                                    Button("Previous Field", systemImage: "chevron.left") { selectedIndex -= 1 }
-                                        .disabled(selectedIndex == 0)
-                                    Spacer()
-                                    Button("Next Field", systemImage: "chevron.right") { selectedIndex += 1 }
-                                        .disabled(selectedIndex == fields.count - 1)
-                                }
-                                .buttonStyle(.borderless)
                             }
                         }
-                        .id("field-editor")
                         if !startsWithDates { dateSection }
                     }
                 }
             }
-            .navigationTitle(reviewing ? "Review Form" : "Form Fields")
+            .navigationTitle(reviewing ? "Review Form" : "Fill Out Form")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Done") { dismiss() } }
@@ -147,22 +139,22 @@ struct FormAssistantView: View {
     @ViewBuilder
     private func fieldControl(_ field: FormField) -> some View {
         if field.annotation.isReadOnly || field.annotation.widgetFieldType == .signature {
-            Text("Review this field on the form.")
+            Text("Use Show on Form to review or sign here.")
                 .font(.subheadline).foregroundStyle(.secondary)
         } else if field.annotation.widgetFieldType == .button {
-            Toggle("Selected", isOn: Binding(
+            Toggle("Check this box", isOn: Binding(
                 get: { field.annotation.buttonWidgetState != .offState },
                 set: { FormFieldSupport.setChecked($0, for: field, in: document); changed() }
             ))
         } else if field.annotation.widgetFieldType == .choice, !field.options.isEmpty {
-            Picker("Value", selection: textBinding(field)) {
+            Picker("Choose an option", selection: textBinding(field)) {
                 Text("Not selected").tag("")
                 ForEach(field.options, id: \.value) { option in
                     Text(option.label).tag(option.value)
                 }
             }
         } else if field.annotation.widgetFieldType == .text {
-            TextField("Value", text: textBinding(field), axis: .vertical)
+            TextField("Enter your answer", text: textBinding(field), axis: .vertical)
                 .textFieldStyle(.roundedBorder)
                 .accessibilityLabel(field.name)
         } else {

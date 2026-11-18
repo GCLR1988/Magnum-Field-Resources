@@ -7,8 +7,10 @@ enum ResourceDestination: Hashable {
     case home
     case directory
     case program(String)
+    case passwordReset
     case links
     case scan
+    case photoMarkup
     case savedForms
 }
 
@@ -16,6 +18,7 @@ struct ContentView: View {
     @EnvironmentObject private var catalogStore: CatalogStore
     @State private var resources = SpreadsheetStore.shared
     @State private var selection: ResourceDestination? = .home
+    @State private var columnVisibility: NavigationSplitViewVisibility = .detailOnly
     @State private var compactColumn: NavigationSplitViewColumn = .detail
     @State private var showSettings = false
     @State private var presentedForms: Program?
@@ -28,7 +31,7 @@ struct ContentView: View {
     }
 
     var body: some View {
-        NavigationSplitView(preferredCompactColumn: $compactColumn) {
+        NavigationSplitView(columnVisibility: $columnVisibility, preferredCompactColumn: $compactColumn) {
             ResourceSidebar(selection: $selection, programs: catalogStore.programs,
                             hasDirectory: resources.hasDirectory)
                 .navigationSplitViewColumnWidth(min: 240, ideal: 280, max: 340)
@@ -47,6 +50,19 @@ struct ContentView: View {
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         AppLanguageToggle()
+                    }
+                    if #available(iOS 26.0, *) {
+                        ToolbarSpacer(.fixed, placement: .topBarTrailing)
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        // Host the full label so compact toolbars don't replace it with an icon.
+                        HStack(spacing: 0) {
+                            GriffinContactMenu()
+                        }
+                        .fixedSize(horizontal: true, vertical: false)
+                    }
+                    if #available(iOS 26.0, *) {
+                        ToolbarSpacer(.fixed, placement: .topBarTrailing)
                     }
                     ToolbarItem(placement: .topBarTrailing) {
                         Button("Settings", systemImage: "gearshape") { showSettings = true }
@@ -93,6 +109,39 @@ struct ContentView: View {
     }
 }
 
+private struct GriffinContactMenu: View {
+    var body: some View {
+        Menu {
+            if let url = URL(string: "tel:+15105131331") {
+                Link(destination: url) {
+                    Label("Call Griffin: 510-513-1331", systemImage: "phone")
+                }
+            }
+            if let url = URL(string: "sms:+15105131331") {
+                Link(destination: url) {
+                    Label("Text Griffin: 510-513-1331", systemImage: "message")
+                }
+            }
+            if let url = URL(string: "mailto:groush@magnumdrywall.com") {
+                Link(destination: url) {
+                    Label("Email: groush@magnumdrywall.com", systemImage: "envelope")
+                }
+            }
+        } label: {
+            HStack(spacing: 5) {
+                Image(systemName: "person.crop.circle.badge.questionmark")
+                    .accessibilityHidden(true)
+                Text("Contact Griffin")
+            }
+            .font(.subheadline.weight(.medium))
+            .fixedSize(horizontal: true, vertical: false)
+        }
+        .labelStyle(.titleAndIcon)
+        .fixedSize(horizontal: true, vertical: false)
+        .accessibilityHint("Choose to call, text, or email Griffin.")
+    }
+}
+
 private struct ResourceSidebar: View {
     @Environment(\.locale) private var locale
     @EnvironmentObject private var catalogStore: CatalogStore
@@ -130,6 +179,13 @@ private struct ResourceSidebar: View {
                     }
                     .bookmarkAction(BookmarkKey.directory)
                 }
+                NavigationLink(value: ResourceDestination.passwordReset) {
+                    HStack(spacing: 10) {
+                        ResourceFolderIcon(name: "Password Reset Request", compact: true)
+                        Text("Password Reset Request")
+                    }
+                }
+                .bookmarkAction(BookmarkKey.passwordReset)
                 NavigationLink(value: ResourceDestination.links) {
                     HStack(spacing: 10) {
                         ResourceFolderIcon(name: "Useful Links", compact: true)
@@ -141,6 +197,10 @@ private struct ResourceSidebar: View {
                     Label("Scan & Send", systemImage: "doc.viewfinder")
                 }
                 .bookmarkAction(BookmarkKey.scan)
+                NavigationLink(value: ResourceDestination.photoMarkup) {
+                    Label("Photo Markup", systemImage: "photo.badge.plus")
+                }
+                .bookmarkAction(BookmarkKey.photoMarkup)
             }
             if visiblePrograms.contains(where: { $0.resourceOrder == 4 }) {
                 Section("More Resources") {
@@ -200,8 +260,12 @@ private struct ResourceDestinationView: View {
                 }
             case .savedForms:
                 SavedFormsView()
+            case .photoMarkup:
+                PhotoMarkupView()
             case .scan:
                 ScanAndSendView()
+            case .passwordReset:
+                PasswordResetRequestView()
             case .links:
                 List { UsefulLinksSection() }
                     .listStyle(.insetGrouped)
@@ -218,7 +282,7 @@ private struct ResourceHomeView: View {
     @EnvironmentObject private var catalogStore: CatalogStore
     @Environment(\.locale) private var locale
     @State private var resources = SpreadsheetStore.shared
-    @State private var search = ""
+    private let search = ""
     @State private var selectedSavedForm: SavedForm?
     let select: (ResourceDestination) -> Void
 
@@ -235,6 +299,7 @@ private struct ResourceHomeView: View {
 
     var body: some View {
         List {
+
             if search.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 Section {
                     TrainingIntroduction()
@@ -268,6 +333,11 @@ private struct ResourceHomeView: View {
                             .buttonStyle(ResourcePressStyle())
                             .bookmarkAction(BookmarkKey.directory)
                         }
+                        Button { select(.passwordReset) } label: {
+                            LandingFolderTile(name: "Password Reset Request", title: AppLanguage.string("Password Reset Request", locale: locale))
+                        }
+                        .buttonStyle(ResourcePressStyle())
+                        .bookmarkAction(BookmarkKey.passwordReset)
                         Button { select(.links) } label: {
                             LandingFolderTile(name: "Useful Links", title: AppLanguage.string("Useful Links", locale: locale))
                         }
@@ -278,6 +348,11 @@ private struct ResourceHomeView: View {
                         }
                         .buttonStyle(ResourcePressStyle())
                         .bookmarkAction(BookmarkKey.scan)
+                        Button { select(.photoMarkup) } label: {
+                            LandingFolderTile(name: "Photo Markup", title: AppLanguage.string("Photo Markup", locale: locale))
+                        }
+                        .buttonStyle(ResourcePressStyle())
+                        .bookmarkAction(BookmarkKey.photoMarkup)
                     }
                     .resourceGridRow()
                 }
@@ -327,7 +402,6 @@ private struct ResourceHomeView: View {
         .fullScreenCover(item: $selectedSavedForm) { form in
             FillableFormView(savedForm: form)
         }
-        .searchable(text: $search, prompt: "Search guides and walkthroughs")
         .refreshable { await catalogStore.syncAll() }
         .overlay(alignment: .bottomTrailing) { DownloadProgressIndicator() }
         .safeAreaInset(edge: .bottom, spacing: 0) { LibraryStatusFooter() }
@@ -353,6 +427,39 @@ private struct ProgramResourceTile: View {
                           title: program.displayName(locale: locale),
                           subtitle: subtitle,
                           logo: catalogStore.logo(for: program))
+    }
+}
+
+struct PasswordResetRequestView: View {
+    @EnvironmentObject private var catalogStore: CatalogStore
+    @State private var resources = SpreadsheetStore.shared
+
+    var body: some View {
+        GeometryReader { geometry in
+            ScrollView {
+                VStack(spacing: 16) {
+                    ForEach(resources.passwordResetLinks) { link in
+                        PasswordResetBubble(link: link)
+                    }
+                    if resources.passwordResetLinks.isEmpty {
+                        Text("No password reset links available yet.")
+                            .foregroundStyle(.secondary)
+                    }
+                    if let error = resources.errorMessage {
+                        Text(error).foregroundStyle(.secondary)
+                    }
+                }
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: 440)
+                .padding(24)
+                .frame(maxWidth: .infinity)
+                .frame(minHeight: geometry.size.height)
+            }
+            .scrollBounceBehavior(.basedOnSize)
+        }
+        .background(AppStyle.background)
+        .navigationTitle("Password Reset Request")
+        .refreshable { await catalogStore.syncAll() }
     }
 }
 

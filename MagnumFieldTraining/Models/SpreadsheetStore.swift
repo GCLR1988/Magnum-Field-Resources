@@ -8,6 +8,7 @@ final class SpreadsheetStore {
 
     private(set) var contacts: [EmployeeContact] = []
     private(set) var links: [UsefulLink] = []
+    private(set) var passwordResetLinks: [UsefulLink] = []
     private(set) var hasDirectory = false
     private(set) var hasLinks = false
     private(set) var isSyncing = false
@@ -16,6 +17,7 @@ final class SpreadsheetStore {
     private(set) var isLocalPreview = false
     private var directoryRevision: String?
     private var linksRevision: String?
+    private var passwordResetRevision: String?
     private var syncTask: Task<Void, Never>?
 
     private struct Snapshot: Codable {
@@ -26,6 +28,9 @@ final class SpreadsheetStore {
         let directoryRevision: String?
         let linksRevision: String?
         let sourceFiles: [DropboxFileMetadata]
+        // Optional fields preserve snapshots saved before password reset support.
+        var passwordResetLinks: [UsefulLink]?
+        var passwordResetRevision: String?
     }
 
     private let snapshotURL: URL
@@ -41,6 +46,8 @@ final class SpreadsheetStore {
            let snapshot = try? JSONDecoder().decode(Snapshot.self, from: data) {
             contacts = snapshot.contacts
             links = snapshot.links
+            passwordResetLinks = snapshot.passwordResetLinks ?? []
+            passwordResetRevision = snapshot.passwordResetRevision
             hasDirectory = snapshot.hasDirectory
             hasLinks = snapshot.hasLinks
             directoryRevision = snapshot.directoryRevision
@@ -70,10 +77,11 @@ final class SpreadsheetStore {
         do {
             let files = try await DropboxService.listResourceSpreadsheets()
             try Task.checkCancellation()
-            let directories = files.filter { $0.name.lowercased() != "useful links.xlsx" }
+            let directories = files.filter { ["company directory.xlsx", "employee directory.xlsx"].contains($0.name.lowercased()) }
             let linkFiles = files.filter { $0.name.lowercased() == "useful links.xlsx" }
-            guard directories.count <= 1, linkFiles.count <= 1 else {
-                throw SpreadsheetError.invalid(AppLanguage.string("More than one directory or Useful Links workbook was found. Keep one copy of each in the connected Dropbox folder."))
+            let passwordResetFiles = files.filter { $0.name.lowercased() == "password reset request.xlsx" }
+            guard directories.count <= 1, linkFiles.count <= 1, passwordResetFiles.count <= 1 else {
+                throw SpreadsheetError.invalid(AppLanguage.string("More than one directory, Useful Links, or Password Reset Request workbook was found. Keep one copy of each in the connected Dropbox folder."))
             }
             sourceFiles = files
             var errors: [String] = []
@@ -123,6 +131,27 @@ final class SpreadsheetStore {
                 hasLinks = false
                 linksRevision = nil
             }
+            if let file = passwordResetFiles.first {
+                do {
+                    let revision = file.id + ":" + file.rev
+                    if passwordResetRevision != revision {
+                        // Only label parsed data with this revision after its download succeeds.
+                        let url = try await MediaCache.shared.ensureCached(file)
+                        let parsed = try await Task.detached(priority: .userInitiated) {
+                            try SpreadsheetResources.links(from: url)
+                        }.value
+                        try Task.checkCancellation()
+                        passwordResetLinks = parsed
+                        passwordResetRevision = revision
+                    }
+                } catch {
+                    if Task.isCancelled { return }
+                    errors.append(AppLanguage.string("Password Reset Request: \(error.localizedDescription)"))
+                }
+            } else {
+                passwordResetLinks = []
+                passwordResetRevision = nil
+            }
             try Task.checkCancellation()
             errorMessage = errors.isEmpty ? nil : errors.joined(separator: "\n")
             try save()
@@ -137,7 +166,8 @@ final class SpreadsheetStore {
         let snapshot = Snapshot(contacts: contacts, links: links,
                                 hasDirectory: hasDirectory, hasLinks: hasLinks,
                                 directoryRevision: directoryRevision, linksRevision: linksRevision,
-                                sourceFiles: sourceFiles)
+                                sourceFiles: sourceFiles,
+                                passwordResetLinks: passwordResetLinks, passwordResetRevision: passwordResetRevision)
         let url = snapshotURL
         try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
         try JSONEncoder().encode(snapshot).write(to: url, options: [.atomic, .completeFileProtection])
@@ -148,6 +178,8 @@ final class SpreadsheetStore {
         syncTask?.cancel()
         contacts = []
         links = []
+        passwordResetLinks = []
+        passwordResetRevision = nil
         directoryRevision = nil
         linksRevision = nil
         errorMessage = nil
@@ -167,7 +199,8 @@ final class SpreadsheetStore {
         let original = Snapshot(contacts: contacts, links: links,
                                 hasDirectory: hasDirectory, hasLinks: hasLinks,
                                 directoryRevision: directoryRevision, linksRevision: linksRevision,
-                                sourceFiles: sourceFiles)
+                                sourceFiles: sourceFiles,
+                                passwordResetLinks: passwordResetLinks, passwordResetRevision: passwordResetRevision)
         let access = url.startAccessingSecurityScopedResource()
         defer { if access { url.stopAccessingSecurityScopedResource() } }
         if directory {
@@ -187,6 +220,8 @@ final class SpreadsheetStore {
         if let snapshot = previewSnapshot {
             contacts = snapshot.contacts
             links = snapshot.links
+            passwordResetLinks = snapshot.passwordResetLinks ?? []
+            passwordResetRevision = snapshot.passwordResetRevision
             hasDirectory = snapshot.hasDirectory
             hasLinks = snapshot.hasLinks
             directoryRevision = snapshot.directoryRevision

@@ -3,7 +3,9 @@ import SwiftUI
 /// Keep document and guide keys unchanged so existing pins become bookmarks.
 enum BookmarkKey {
     static let directory = "bookmark:directory"
+    static let passwordReset = "bookmark:password-reset"
     static let links = "bookmark:links"
+    static let photoMarkup = "bookmark:photo-markup"
     static let scan = "bookmark:scan"
     static func program(_ id: String) -> String { "bookmark:program:" + id }
     static func folder(_ id: String) -> String { "bookmark:folder:" + id }

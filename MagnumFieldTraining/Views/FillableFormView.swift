@@ -109,7 +109,7 @@ struct FillableFormView: View {
                         startsWithDates = false
                         showAssistant = true
                     } label: {
-                        Label("Form Fields", systemImage: "list.bullet.rectangle")
+                        Label("Fill Out Form", systemImage: "list.bullet.rectangle")
                     }
                     .disabled(document == nil || export != nil)
                     Button {
@@ -122,17 +122,7 @@ struct FillableFormView: View {
                     .accessibilityValue(isDrawing ? "On" : "Off")
                     .disabled(document == nil || export != nil)
                     Button {
-                        pdfView.endEditing(true)
-                        pdfView.finishStroke()
-                        isDrawing = false
-                        // Scans (including saved scans) have no fillable fields to review.
-                        if let document, FormFieldSupport.fields(in: document).isEmpty {
-                            share()
-                        } else {
-                            reviewing = true
-                            startsWithDates = false
-                            showAssistant = true
-                        }
+                        share()
                     } label: {
                         Label("Share", systemImage: "square.and.arrow.up")
                     }
